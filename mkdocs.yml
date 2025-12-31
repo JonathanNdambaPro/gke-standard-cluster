@@ -1,0 +1,58 @@
+site_name: Event-Driven GCP
+repo_url: https://github.com/jojo/event-driven-gcp
+site_url: https://jojo.github.io/event-driven-gcp
+site_description: Event-driven architecture on GCP with CloudEvent ingestion and Delta Lake storage
+site_author: Jonathan Ndamba
+edit_uri: edit/main/docs/
+repo_name: jojo/event-driven-gcp
+copyright: Maintained by <a href="https://jojo.com">jojo</a>.
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - API Reference: modules.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."]
+          options:
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            heading_level: 3
+theme:
+  name: material
+  feature:
+    tabs: true
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jojo/event-driven-gcp
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/event-driven-gcp
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true

@@ -1,0 +1,10 @@
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: my-frontend-config
+spec:
+  # HTTP to HTTPS Redirect
+  redirectToHttps:
+    enabled: true
+  # SSL Policy
+  sslPolicy: production-ssl-policy

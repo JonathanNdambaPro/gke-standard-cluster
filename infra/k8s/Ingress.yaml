@@ -1,0 +1,27 @@
+# Créer un nom de domain avec cloud domain name (Cloud Domain sur l'ui de GCP puis vérifier sur Cloud DNS qu'il est bien disponible)
+## Lien : https://github.com/stacksimplify/google-kubernetes-engine/blob/main/37-Google-Cloud-Domains/README.md
+
+# Créer une adresse ip externe reserver et l'associer au domaine créer (VPC > Adresse IP > Réserver une adresse ip externe | Cloud Dns > Ajouter une règle de routage)
+## Lien : https://github.com/stacksimplify/google-kubernetes-engine/blob/main/38-GKE-Ingress-ExternalIP/README.md
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-namebasedvhost-routing
+  annotations:
+    # External Load Balancer
+    kubernetes.io/ingress.class: gce
+    # Static IP for Ingress Service
+    kubernetes.io/ingress.global-static-ip-name: template-external-ip
+    # Google Managed SSL Certificates
+    networking.gke.io/managed-certificates: managed-cert-for-ingress
+    # SSL Redirect HTTP to HTTPS
+    networking.gke.io/v1beta1.FrontendConfig: my-frontend-config
+    # External DNS - For creating a Record Set in Google Cloud Cloud DNS
+    external-dns.alpha.kubernetes.io/hostname: templatejojotest.com
+spec:
+  defaultBackend:
+    service:
+      name: cdn-demo-nodeport-service
+      port:
+        number: 80

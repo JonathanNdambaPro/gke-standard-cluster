@@ -1,0 +1,179 @@
+name: Backend Docker Build
+
+on:
+  push:
+    branches:
+      - "develop"
+    paths:
+      - "api/**"
+      - "infra/**"
+      - "Dockerfile"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/main.yml"
+  pull_request:
+    branches:
+      - "develop"
+    types: [opened, synchronize, reopened, ready_for_review]
+
+env:
+  GCP_PROJECT_ID: dataascode
+  GCP_ZONE: europe-west1
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+  IMAGE_NAME: event-driven
+  REPO_ARTIFACTORY: event-driven-gcp
+  TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY: module.artifactory
+
+jobs:
+  tests-and-type-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13"]
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up the environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run tests
+        run: uv run python -m pytest tests --cov --cov-config=pyproject.toml --cov-report=xml
+
+      - name: Check typing
+        run: uv run ty check
+
+
+      - name: Upload coverage reports to Codecov with GitHub Action on Python 3.11
+        uses: codecov/codecov-action@v4
+        if: ${{ matrix.python-version == '3.11' }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Configure Docker to use the gcloud command-line tool as a credential
+      # helper for authentication
+      - run: |-
+          gcloud --quiet auth configure-docker ${{ env.GCP_ZONE}}-docker.pkg.dev --project=${{ env.GCP_PROJECT_ID }}
+
+      # Installation for terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.12.1
+
+      # Initialisation of terraform
+      - name: Terraform init
+        run: |
+          cd infra && terraform init -upgrade -backend-config="backend/dev.gcs.backend"
+
+      # Plannification of terraform
+      - name: Terraform plan for artifatory
+        run: |
+          cd infra && terraform plan \
+          -target=${{ env.TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY }} \
+          -var-file="variables/dev.tfvars" \
+          -var "github_sha=${GITHUB_SHA::7}" \
+          -var "environment=dev" \
+          -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
+          -var "name_image_docker=${{ env.IMAGE_NAME }}" \
+          -lock=false
+
+      # déploiement of terraform
+      - name: Terraform apply for for artifatory
+        run: |
+          cd infra && terraform apply \
+          --auto-approve \
+          -target=${{ env.TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY }} \
+          -var-file="variables/dev.tfvars" \
+          -var "github_sha=${GITHUB_SHA::7}" \
+          -var "environment=dev" \
+          -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
+          -var "name_image_docker=${{ env.IMAGE_NAME }}" \
+          -lock=false
+
+      # Génération du tag avec la date
+      - name: Generate date tag
+        id: date_tag
+        run: echo "date=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+
+      # Build the artifact
+      - name: Docker Build
+        run: |
+          docker build . \
+          -t ${{ env.IMAGE_NAME }}:${GITHUB_SHA::7} \
+          --platform linux/amd64
+
+      # Tag the artifact avec plusieurs tags
+      - name: Docker Tag
+        run: |
+          IMAGE_BASE=${{ env.GCP_ZONE}}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPO_ARTIFACTORY }}/${{ env.IMAGE_NAME }}
+          docker tag ${{ env.IMAGE_NAME }}:${GITHUB_SHA::7} ${IMAGE_BASE}:${GITHUB_SHA::7}
+          docker tag ${{ env.IMAGE_NAME }}:${GITHUB_SHA::7} ${IMAGE_BASE}:${{ steps.date_tag.outputs.date }}
+          docker tag ${{ env.IMAGE_NAME }}:${GITHUB_SHA::7} ${IMAGE_BASE}:latest
+
+      # Publish the artifact avec tous les tags
+      - name: Docker Publish
+        run: |
+          IMAGE_BASE=${{ env.GCP_ZONE}}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPO_ARTIFACTORY }}/${{ env.IMAGE_NAME }}
+          docker push ${IMAGE_BASE}:${GITHUB_SHA::7}
+          docker push ${IMAGE_BASE}:${{ steps.date_tag.outputs.date }}
+          docker push ${IMAGE_BASE}:latest
+
+      # Planification of terraform
+      - name: Terraform plan
+        run: |
+          cd infra && terraform plan \
+          -var-file="variables/dev.tfvars" \
+          -var "github_sha=${GITHUB_SHA::7}" \
+          -var "environment=dev" \
+          -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
+          -var "name_image_docker=${{ env.IMAGE_NAME }}" \
+          -lock=false
+
+      # Deployment of terraform
+      - name: Terraform apply
+        run: |
+          cd infra && terraform apply --auto-approve \
+          -var-file="variables/dev.tfvars" \
+          -var "github_sha=${GITHUB_SHA::7}" \
+          -var "environment=dev" \
+          -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
+          -var "name_image_docker=${{ env.IMAGE_NAME }}" \
+          -lock=false
+
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: Set up the environment
+        uses: ./.github/actions/setup-python-env
+
+      - name: Run checks
+        run: make check
