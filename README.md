@@ -107,16 +107,58 @@ event-driven-gcp/
 │   └── utils/               # Configuration and utilities
 ├── infra/                   # Terraform infrastructure
 │   ├── modules/             # Reusable Terraform modules
-│   │   ├── event-driven-stack/
-│   │   │   ├── cloud_run/
-│   │   │   ├── eventarc/
-│   │   │   ├── pubsub/
-│   │   │   └── service_account/
-│   │   └── artifactory/
+│   │   ├── cloud-dns/       # Cloud DNS Zone & Records
+│   │   ├── cloud-domains/   # Domain Registration
+│   │   ├── gke-cluster/     # GKE Standard Cluster
+│   │   ├── network/         # VPC, Subnets, Global IP
+│   │   ├── security/        # SSL Policies
+│   │   └── service-accounts/# IAM & Service Accounts
 │   └── backend/             # Terraform backend configs
 ├── tests/                   # Test suite
 └── docs/                    # MkDocs documentation
 ```
+
+## GKE Standard Cluster Infrastructure 🏗️
+
+This project now includes a production-ready GKE Standard cluster setup via Terraform.
+
+### Features
+*   **GKE Standard**: Best-practice cluster with separate node pools.
+*   **Global Networking**: VPC-native cluster with specific subnets.
+*   **Cloud DNS**: Automatic DNS zone management.
+*   **Cloud Domains**: **Optional** automated domain registration via Terraform.
+*   **Security**: Least-privilege IAM for GKE Service Accounts (GCS, BigQuery).
+*   **Ingress**: Global Load Balancing with Managed SSL Certificates (`ManagedCertificate`).
+
+### Deployment Guide
+
+1.  **Initialize Terraform**
+    ```bash
+    make init_local_terraform
+    ```
+
+2.  **Configure Variables**
+    Edit `infra/terraform/tfvars/local.tfvars` with your project ID and **Contact Info** (Required for Cloud Domains).
+
+3.  **Plan & Apply**
+    ```bash
+    make plan_local_terraform
+    make apply_local_terraform
+    ```
+
+4.  **Deploy Kubernetes Manifests**
+    ```bash
+    make apply_k8s
+    ```
+
+### Troubleshooting Ingress 🕵️‍♂️
+
+If you see a `502 Bad Gateway` or `Server Error`:
+1.  **Check Backends**: `kubectl describe ingress` -> Check `Backends`.
+    *   If `Unknown/Unhealthy`: It's usually a Health Check failure.
+2.  **Port Mismatch**: Ensure your **Service** `targetPort` matches the **Container** port.
+    *   *Example*: App listens on `8080`, Service must target `8080`.
+3.  **Labels**: Ensure Service `selector` matches Deployment `labels`.
 
 ## API Endpoints
 

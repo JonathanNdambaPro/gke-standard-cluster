@@ -9,8 +9,8 @@ copyright: Maintained by <a href="https://jojo.com">jojo</a>.
 
 nav:
   - Home: index.md
-  - Architecture: architecture.md
-  - API Reference: modules.md
+  - Infrastructure: infrastructure.md
+  - Kubernetes: kubernetes.md
 plugins:
   - search
   - mkdocstrings:
