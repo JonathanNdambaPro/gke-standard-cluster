@@ -2,7 +2,7 @@
 # ONLY IN LOCAL => GENERATE SERVICE_ACCOUNT AND HIS JSON KEYS FOR RUNNING CICD GITHUB ACTION
 
 # Variables de configuration
-SERVICE_ACCOUNT_NAME="event-driven-dataascode"
+SERVICE_ACCOUNT_NAME="event-driven-heevi-dataascode"
 PROJECT_ID="dataascode"
 SERVICE_ACCOUNT_EMAIL="${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 KEY_FILE="${SERVICE_ACCOUNT_NAME}-key.json"
@@ -16,60 +16,102 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
     --role="roles/iam.serviceAccountAdmin"
 
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
-    --role="roles/iam.serviceAccountKeyAdmin"
-
+# Backend GCS (state Terraform)
 echo "Backend GCS (state Terraform)"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
     --role="roles/storage.admin"
 
+# Artifact Registry
 echo "Artifact Registry"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
     --role="roles/artifactregistry.admin"
 
-echo "Cloud Run v2"
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
-    --role="roles/run.admin"
+# IAM User (pour attacher les SA aux ressources)
+echo "IAM Service Account User"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
     --role="roles/iam.serviceAccountUser"
 
-echo "Cloud Scheduler (création de job + OIDC Token)"
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
-    --role="roles/cloudscheduler.admin"
+# IAM Token Creator (pour OIDC et autres needs)
+echo "IAM Service Account Token Creator"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
     --role="roles/iam.serviceAccountTokenCreator"
 
-echo "Secret Eventarc"
-gcloud projects add-iam-policy-binding dataascode \
+# Eventarc (pour gérer les triggers et secrets associés si besoin dans le module eventarc)
+echo "Eventarc Admin"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
       --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
       --role="roles/eventarc.admin"
 
-echo "Secret Manager"
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
-    --role="roles/secretmanager.admin"
-
-echo "Gestion des IAM Members du projet (pour ajouter BigQuery, Run Invoker, etc.)"
+# Gestion des IAM Members du projet (pour ajouter BigQuery, Run Invoker, etc.)
+echo "Project IAM Admin (pour gérer les binding IAM via Terraform)"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
     --role="roles/resourcemanager.projectIamAdmin"
 
-echo "Ajout des droits BigQuery Admin pour créer des datasets"
+# Pub/Sub (pour les topics et subs)
+echo "Pub/Sub Admin"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
-    --role="roles/bigquery.admin"
+    --role="roles/pubsub.admin"
 
-echo "Ajout des droits Pub/Sub Editor pour créer des topics"
+# --- NOUVEAUX RÔLES AJOUTÉS POUR LEAST PRIVILEGE ---
+
+# Network (VPC, Subnets, Firewall rules) via modules/network
+echo "Compute Network Admin"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
-    --role="roles/pubsub.editor"
+    --role="roles/compute.networkAdmin"
+
+# Security (Cloud Armor policies) via modules/security
+echo "Compute Security Admin"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/compute.securityAdmin"
+
+# GKE Cluster via modules/gke-cluster
+echo "Kubernetes Engine Admin"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/container.clusterAdmin"
+
+# GKE Developer (pour déployer dans le cluster via kubectl/helm)
+echo "Kubernetes Engine Developer"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/container.developer"
+
+# Cloud DNS via modules/cloud-dns
+echo "Cloud DNS Admin"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/dns.admin"
+
+# Cloud Domains via modules/cloud-domains
+echo "Cloud Domains Admin"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/domains.admin"
+
+
+# Service Usage Admin (pour activer les APIs via modules/google-api)
+echo "Service Usage Admin"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/serviceusage.serviceUsageAdmin"
+
+
+# Monitoring Admin (pour gérer les alert policies et notification channels)
+echo "Monitoring Editor"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/monitoring.editor"
+
+
+# --- FIN DES AJOUTS ---
 
 echo "Génération de la clé JSON pour ${SERVICE_ACCOUNT_NAME}…"
 gcloud iam service-accounts keys create ${KEY_FILE} \

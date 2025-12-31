@@ -1,6 +1,6 @@
 # cloud-domains
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 No requirements.
@@ -33,6 +33,7 @@ No modules.
 | <a name="input_contact_phone"></a> [contact\_phone](#input\_contact\_phone) | n/a | `string` | n/a | yes |
 | <a name="input_contact_postal_code"></a> [contact\_postal\_code](#input\_contact\_postal\_code) | n/a | `string` | n/a | yes |
 | <a name="input_contact_state"></a> [contact\_state](#input\_contact\_state) | n/a | `string` | n/a | yes |
+| <a name="input_create_domain_registration"></a> [create\_domain\_registration](#input\_create\_domain\_registration) | Whether to create the registration | `bool` | `true` | no |
 | <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | The domain name to register (e.g. example.com) | `string` | n/a | yes |
 | <a name="input_name_servers"></a> [name\_servers](#input\_name\_servers) | List of name servers from Cloud DNS | `list(string)` | n/a | yes |
 | <a name="input_yearly_price_units"></a> [yearly\_price\_units](#input\_yearly\_price\_units) | Maximum price in USD you are willing to pay | `string` | `"12"` | no |
@@ -40,4 +41,4 @@ No modules.
 ## Outputs
 
 No outputs.
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

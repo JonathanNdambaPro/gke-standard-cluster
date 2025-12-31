@@ -24,13 +24,48 @@ An event-driven architecture implementation on Google Cloud Platform that ingest
 - 🐳 **Multi-Tag Docker**: Automatic image tagging with SHA, timestamp, and latest
 - 🎯 **Event-Driven Architecture**: Native Cloud Run service integration with Eventarc
 - 🛡️ **Secure Storage**: GCS access with least-privilege IAM policies
+- ⚡ **Ephemeral Environments**: Automatic per-PR environment creation on Shared Cluster
+- 🧩 **Shared Infrastructure**: Efficient resource usage with consolidated GKE/VPC
 
 ## Architecture
 
-```
-Pub/Sub Topic → Eventarc → Cloud Run (FastAPI) → Delta Lake (GCS)
-                                  ↓
-                              Logfire (Observability)
+```mermaid
+graph TD
+    subgraph GCP["Google Cloud Platform"]
+        subgraph SharedInfra["Shared Infrastructure (Prod)"]
+            VPC["VPC Network"]
+            DNS["Cloud DNS"]
+            GKE["GKE Cluster Autopilot"]
+        end
+
+        subgraph EventFlow["Event Driven Architecture"]
+            PubSub["Pub/Sub Topic"]
+            Eventarc["Eventarc Trigger"]
+        end
+
+        subgraph App["Application Layer"]
+            Service["K8s Service (Cloud Run)"]
+            Pods["FastAPI Pods"]
+            Delta["Delta Lake (GCS)"]
+            Logfire["Logfire Observability"]
+        end
+    end
+
+    %% Relationships
+    PubSub -->|Push| Eventarc
+    Eventarc -->|Trigger| Service
+    Service --> Pods
+    Pods -->|Write| Delta
+    Pods -->|Log| Logfire
+
+    %% Styling
+    classDef shared fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000;
+    classDef event fill:#fff3e0,stroke:#ff6f00,stroke-width:2px,color:#000;
+    classDef app fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000;
+
+    class VPC,DNS,GKE shared;
+    class PubSub,Eventarc event;
+    class Service,Pods,Delta,Logfire app;
 ```
 
 The system follows an event-driven pattern where:
@@ -107,16 +142,70 @@ event-driven-gcp/
 │   └── utils/               # Configuration and utilities
 ├── infra/                   # Terraform infrastructure
 │   ├── modules/             # Reusable Terraform modules
-│   │   ├── event-driven-stack/
-│   │   │   ├── cloud_run/
-│   │   │   ├── eventarc/
-│   │   │   ├── pubsub/
-│   │   │   └── service_account/
-│   │   └── artifactory/
+│   │   ├── cloud-dns/       # Cloud DNS Zone & Records
+│   │   ├── cloud-domains/   # Domain Registration
+│   │   ├── gke-cluster/     # GKE Standard Cluster
+│   │   ├── network/         # VPC, Subnets, Global IP
+│   │   ├── security/        # SSL Policies
+│   │   └── service-accounts/# IAM & Service Accounts
 │   └── backend/             # Terraform backend configs
 ├── tests/                   # Test suite
 └── docs/                    # MkDocs documentation
 ```
+
+## GKE Standard Cluster Infrastructure 🏗️
+
+This project now includes a production-ready GKE Standard cluster setup via Terraform.
+
+### Features
+*   **GKE Standard**: Best-practice cluster with separate node pools.
+*   **Global Networking**: VPC-native cluster with specific subnets.
+*   **Cloud DNS**: Automatic DNS zone management.
+*   **Cloud Domains**: **Optional** automated domain registration via Terraform.
+*   **Security**: Least-privilege IAM for GKE Service Accounts (GCS, BigQuery).
+*   **Ingress**: Global Load Balancing with Managed SSL Certificates (`ManagedCertificate`).
+
+### Deployment Guide
+
+1.  **Initialize Terraform**
+    ```bash
+    make init_local_terraform
+    ```
+
+2.  **Configure Variables**
+    Edit `infra/terraform/tfvars/local.tfvars` with your project ID and **Contact Info** (Required for Cloud Domains).
+
+3.  **Plan & Apply (Production)**
+    ```bash
+    # Select Production Workspace
+    terraform workspace select default
+
+    make plan_local_terraform
+    make apply_local_terraform
+    ```
+
+    *For Ephemeral Environments, the CI/CD pipeline handles workspace selection automatically based on the branch name.*
+
+4.  **Deploy Kubernetes Manifests**
+    ```bash
+    make apply_k8s
+    ```
+
+### ⚠️ Critical Warning: Infrastructure Destruction
+
+> [!WARNING]
+> **Manual Deletion Required for Cloud Domains**
+> Terraform is configured to **abandon** the `google_clouddomains_registration` resource upon destruction to prevent accidental loss of domain ownership.
+> **You must delete the Domain and DNS Zone manually** in the Google Cloud Console if you wish to stop billing/ownership. Terraform will NOT delete them.
+
+### Troubleshooting Ingress 🕵️‍♂️
+
+If you see a `502 Bad Gateway` or `Server Error`:
+1.  **Check Backends**: `kubectl describe ingress` -> Check `Backends`.
+    *   If `Unknown/Unhealthy`: It's usually a Health Check failure.
+2.  **Port Mismatch**: Ensure your **Service** `targetPort` matches the **Container** port.
+    *   *Example*: App listens on `8080`, Service must target `8080`.
+3.  **Labels**: Ensure Service `selector` matches Deployment `labels`.
 
 ## API Endpoints
 
@@ -210,11 +299,11 @@ make test-cov
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
+See [CONTRIBUTING.md](https://github.com/jojo/event-driven-gcp/blob/main/CONTRIBUTING.md) for development guidelines.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/jojo/event-driven-gcp/blob/main/LICENSE) file for details.
 
 ## CI/CD Pipeline
 

@@ -1,0 +1,144 @@
+# Default values for helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 5
+
+image:
+  repository: stacksimplify/kube-nginxapp1
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.0.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "event-driven-api"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations:
+    iam.gke.io/gcp-service-account: gke-sa@dataascode.iam.gserviceaccount.com
+  name: "event-driven-api-sa"
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8000
+  annotations: {}
+
+ingress:
+  enabled: true
+  registerDns: true
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.global-static-ip-name: template-external-ip
+    networking.gke.io/managed-certificates: managed-cert-for-ingress
+    networking.gke.io/v1beta1.FrontendConfig: my-frontend-config
+    external-dns.alpha.kubernetes.io/hostname: templatejojotest.com
+  hosts:
+    - host: templatejojotest.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+resources:
+  requests:
+    memory: 2Gi
+    cpu: 1000m
+  limits:
+    memory: 4Gi
+    cpu: 2000m
+
+# Probes configuration
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8000
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+startupProbe:
+  httpGet:
+    path: /
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 30  # 30 * 5s = 150s max startup time
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# GKE Specific Configurations
+
+backendConfig:
+  name: my-backendconfig
+  timeoutSec: 42
+  drainingTimeoutSec: 62
+  logging:
+    enable: true
+    sampleRate: 1.0
+  cdn:
+    enabled: true
+    includeHost: true
+    includeProtocol: true
+    includeQueryString: false
+  securityPolicy:
+    name: cloud-armor-policy
+  healthCheck:
+    checkIntervalSec: 15
+    timeoutSec: 5
+    healthyThreshold: 1
+    unhealthyThreshold: 2
+    type: HTTP
+    requestPath: /
+    port: 8000
+
+frontendConfig:
+  name: my-frontend-config
+  redirectToHttps: true
+  sslPolicy: production-ssl-policy
+
+persistence:
+  enabled: true
+  claimName: pv-claim
+  accessMode: ReadWriteOnce
+  size: 50Gi
+  storageClass: standard-rwo

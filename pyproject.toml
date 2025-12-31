@@ -20,6 +20,7 @@ classifiers = [
 dependencies = [
     "deltalake>=1.2.1",
     "dotenv>=0.9.9",
+    "duckdb>=1.4.3",
     "fastapi>=0.121.3",
     "gcsfs>=2025.10.0",
     "google-cloud-pubsub>=2.33.0",
@@ -27,9 +28,13 @@ dependencies = [
     "jinja2>=3.1.2",
     "logfire>=4.15.1",
     "loguru>=0.7.3",
+    "numpy>=2.0.2",
+    "pandas>=2.3.3",
     "polars>=1.35.2",
     "pyarrow>=21.0.0",
+    "pydantic>=2.12.5",
     "pydantic-settings>=2.11.0",
+    "sqlglot>=28.6.0",
     "uvicorn>=0.38.0",
 ]
 

@@ -1,0 +1,85 @@
+name: Cleanup Ephemeral Environment
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+    paths:
+       - "api/**"
+       - "infra/helm/**"
+
+env:
+  CONFIG_FILE: config.yaml
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Load config from config.yaml
+        id: config
+        run: |
+          echo "GCP_PROJECT_ID=$(yq '.gcp.project_id' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
+          echo "GCP_ZONE=$(yq '.gcp.region' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
+          echo "GKE_CLUSTER_NAME=$(yq '.gke.cluster_name' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER_NAME }}
+          location: ${{ env.GCP_ZONE }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Calculate Namespace
+        id: ns
+        run: |
+          REF_NAME="${{ github.event.pull_request.head.ref }}"
+          SANITIZED_NAME=$(echo "$REF_NAME" | tr '[:upper:]' '[:lower:]' | tr '/' '-' | sed 's/[^a-z0-9-]//g')
+          echo "namespace=$SANITIZED_NAME" >> $GITHUB_OUTPUT
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.12.1
+
+      - name: Terraform Destroy Ephemeral Architecture
+        run: |
+          # Same logic to calculate filter env for variables
+          NAMESPACE="${{ steps.ns.outputs.namespace }}"
+          FILTER_ENV="feat-${NAMESPACE#feat-}"
+
+          # Init
+          terraform -chdir=infra/terraform init -upgrade -backend-config="backend/main.gcs.backend"
+
+          # Select Workspace
+          terraform -chdir=infra/terraform workspace select $NAMESPACE || echo "Workspace $NAMESPACE not found"
+
+          # Destroy Resources
+          # We need to pass variables so validation passes, even if destroying
+          terraform -chdir=infra/terraform destroy -var-file="tfvars/main.tfvars" --auto-approve \
+          -var "eventarc_trigger_namespace=$NAMESPACE" \
+          -var "eventarc_environment_filter=$FILTER_ENV" \
+          -lock=false
+
+          # Delete Workspace
+          terraform -chdir=infra/terraform workspace select default
+          terraform -chdir=infra/terraform workspace delete $NAMESPACE
+
+      - name: Delete Environment
+        run: |
+          NAMESPACE="${{ steps.ns.outputs.namespace }}"
+
+          echo "Cleaning up namespace: $NAMESPACE"
+
+          # Uninstall Helm release
+          helm uninstall event-driven-api --namespace $NAMESPACE || true
+
+          # Delete Namespace
+          kubectl delete namespace $NAMESPACE --ignore-not-found=true

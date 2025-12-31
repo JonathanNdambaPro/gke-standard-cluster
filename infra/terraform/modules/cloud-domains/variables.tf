@@ -3,6 +3,12 @@ variable "domain_name" {
   type        = string
 }
 
+variable "create_domain_registration" {
+  description = "Whether to create the registration"
+  type        = bool
+  default     = true
+}
+
 variable "name_servers" {
   description = "List of name servers from Cloud DNS"
   type        = list(string)

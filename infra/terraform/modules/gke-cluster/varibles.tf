@@ -8,10 +8,7 @@ variable "subnet" {
   description = "value"
 }
 
-variable "machine_type" {
-  type        = string
-  description = "Machine type for the node pool"
-}
+
 
 variable "email" {
   type        = string
@@ -19,12 +16,6 @@ variable "email" {
 }
 
 variable "gke_cluster_name" {
-  type        = string
-  description = "value"
-}
-
-
-variable "gke_nood_pool_name" {
   type        = string
   description = "value"
 }

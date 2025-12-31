@@ -1,4 +1,5 @@
-resource "google_clouddomains_registration" "my_domain" {
+resource "google_clouddomains_registration" "my_domain" { # WARNING: can't be destroy it's just abandonned have to be donne manually with CLI or UI
+  count       = var.create_domain_registration ? 1 : 0    # If already exist donn't try to create
   domain_name = var.domain_name
   location    = "global"
 

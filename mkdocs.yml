@@ -9,8 +9,9 @@ copyright: Maintained by <a href="https://jojo.com">jojo</a>.
 
 nav:
   - Home: index.md
-  - Architecture: architecture.md
-  - API Reference: modules.md
+  - Infrastructure: infrastructure.md
+  - Kubernetes: kubernetes.md
+  - Configuration: configuration-sync.md
 plugins:
   - search
   - mkdocstrings:
@@ -44,6 +45,9 @@ theme:
   icon:
     repo: fontawesome/brands/github
 
+extra_javascript:
+  - https://unpkg.com/mermaid/dist/mermaid.min.js
+
 extra:
   social:
     - icon: fontawesome/brands/github
@@ -56,3 +60,10 @@ markdown_extensions:
       permalink: true
   - pymdownx.arithmatex:
       generic: true
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

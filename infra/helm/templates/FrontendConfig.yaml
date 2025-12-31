@@ -1,0 +1,10 @@
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ .Values.frontendConfig.name }}
+spec:
+  # HTTP to HTTPS Redirect
+  redirectToHttps:
+    enabled: {{ .Values.frontendConfig.redirectToHttps }}
+  # SSL Policy
+  sslPolicy: {{ .Values.frontendConfig.sslPolicy }}

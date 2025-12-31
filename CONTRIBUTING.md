@@ -54,73 +54,125 @@ Please note this documentation assumes you already have `uv` and `Git` installed
 ```bash
 cd <directory_in_which_repo_should_be_created>
 git clone git@github.com:YOUR_NAME/event-driven-gcp.git
+
 ```
 
 3. Now we need to install the environment. Navigate into the directory
 
 ```bash
 cd event-driven-gcp
+
 ```
 
 Then, install and activate the environment with:
 
 ```bash
 uv sync
+
 ```
 
 4. Install pre-commit to run linters/formatters at commit time:
 
 ```bash
 uv run pre-commit install
+
 ```
 
 5. Create a branch for local development:
 
 ```bash
 git checkout -b name-of-your-bugfix-or-feature
+
 ```
 
 Now you can make your changes locally.
 
 6. Don't forget to add test cases for your added functionality to the `tests` directory.
-
 7. When you're done making changes, check that your changes pass the formatting tests.
 
 ```bash
 make check
+
 ```
 
 Now, validate that all unit tests are passing:
 
 ```bash
 make test
+
 ```
 
 9. Before raising a pull request you should also run tox.
-   This will run the tests across different versions of Python:
+This will run the tests across different versions of Python:
 
 ```bash
 tox
+
 ```
 
 This requires you to have multiple versions of python installed.
 This step is also triggered in the CI/CD pipeline, so you could also choose to skip this step locally.
 
-10. Commit your changes and push your branch to GitHub:
+10. Commit your changes and push your branch to GitHub.
+**Please follow the [Commit Message Guidelines](https://www.google.com/search?q=%23commit-message-guidelines) below.**
 
 ```bash
 git add .
-git commit -m "Your detailed description of your changes."
+git commit -m "feat: add new handler for pubsub events"
 git push origin name-of-your-bugfix-or-feature
+
 ```
 
 11. Submit a pull request through the GitHub website.
+
+# Commit Message Guidelines
+
+We follow the **[Conventional Commits](https://www.google.com/search?q=https://www.conventionalcommits.org/)** specification. This leads to more readable messages that are easy to follow when looking through the project history.
+
+Each commit message consists of a **header**, a **body**, and a **footer**. The header has a special format that includes a **type**, a **scope**, and a **subject**:
+
+```text
+<type>(<scope>): <subject>
+
+```
+
+### Allowed Types
+
+| Type | Description |
+| --- | --- |
+| **feat** | A new feature (corresponds to `MINOR` in SemVer). |
+| **fix** | A bug fix (corresponds to `PATCH` in SemVer). |
+| **docs** | Documentation only changes. |
+| **style** | Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc). |
+| **refactor** | A code change that neither fixes a bug nor adds a feature. |
+| **perf** | A code change that improves performance. |
+| **test** | Adding missing tests or correcting existing tests. |
+| **build** | Changes that affect the build system or external dependencies (example scopes: `pip`, `uv`, `docker`). |
+| **ci** | Changes to our CI configuration files and scripts (example scopes: `github-actions`). |
+| **chore** | Other changes that don't modify `src` or `test` files. |
+| **revert** | Reverts a previous commit. |
+
+### Breaking Changes
+
+If your change breaks backward compatibility (e.g., removing a public API method), you must indicate it to trigger a `MAJOR` version update. You can do this by:
+
+1. Adding an `!` after the type: `feat!: drop support for python 3.9`
+2. Or adding a footer: `BREAKING CHANGE: The 'auth' parameter is no longer accepted.`
 
 # Pull Request Guidelines
 
 Before you submit a pull request, check that it meets these guidelines:
 
 1. The pull request should include tests.
-
 2. If the pull request adds functionality, the docs should be updated.
-   Put your new functionality into a function with a docstring, and add the feature to the list in `README.md`.
+3. Ensure your commit messages follow the Conventional Commits specification.
+
+### ⚡ Ephemeral Environments
+
+Every Pull Request automatically provisions a full **Ephemeral Environment**:
+1.  **Infrastructure**: A `terraform workspace` is created (e.g., `feat-new-api`).
+2.  **Deployment**: The app is deployed to a dedicated Kubernetes Namespace.
+3.  **Isolation**: Dedicated Pub/Sub topics and Eventarc triggers are created (e.g., `trigger-ingest-feat-new-api`).
+4.  **Cleanup**: When the PR is merged or closed, the environment is automatically destroyed.
+
+```

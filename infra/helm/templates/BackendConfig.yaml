@@ -1,0 +1,34 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ .Values.backendConfig.name }}
+spec:
+  timeoutSec: {{ .Values.backendConfig.timeoutSec }} # Backend service timeout: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#timeout
+  connectionDraining: # Connection draining timeout: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#draining_timeout
+    drainingTimeoutSec: {{ .Values.backendConfig.drainingTimeoutSec }}
+  logging: # HTTP access logging: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#http_logging
+    enable: {{ .Values.backendConfig.logging.enable }}
+    sampleRate: {{ .Values.backendConfig.logging.sampleRate }}
+  {{- with .Values.backendConfig.healthCheck }}
+  healthCheck:
+    checkIntervalSec: {{ .checkIntervalSec }}
+    timeoutSec: {{ .timeoutSec }}
+    healthyThreshold: {{ .healthyThreshold }}
+    unhealthyThreshold: {{ .unhealthyThreshold }}
+    type: {{ .type }}
+    requestPath: {{ .requestPath }}
+    port: {{ .port }}
+  {{- end }}
+  cdn:
+    enabled: {{ .Values.backendConfig.cdn.enabled }}
+    cachePolicy:
+      includeHost: {{ .Values.backendConfig.cdn.includeHost }}
+      includeProtocol: {{ .Values.backendConfig.cdn.includeProtocol }}
+      includeQueryString: {{ .Values.backendConfig.cdn.includeQueryString }}
+  securityPolicy:
+    name: {{ .Values.backendConfig.securityPolicy.name }}
+
+# sampleRate: Specify a value from 0.0 through 1.0, where 0.0 means no packets are logged
+# and 1.0 means 100% of packets are logged. This field is only relevant if enable is set
+# to true. sampleRate is an optional field, but if it's configured then enable: true must
+# also be set or else it is interpreted as enable: false.

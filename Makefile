@@ -1,8 +1,8 @@
 .PHONY: install
 install: ## Install the virtual environment and install the pre-commit hooks
 	@echo "🚀 Creating virtual environment using uv"
-	@uv sync
-	@uv run pre-commit install --hook-type commit-msg
+	@uv sync --all-groups
+	@uv run pre-commit install --hook-type commit-msg --hook-type pre-push
 
 .PHONY: check
 check: ## Run code quality tools.
@@ -48,7 +48,7 @@ docs: ## Build and serve the documentation
 
 .PHONY:	init_terraform_local
 init_terraform_local:
-	@cd infra/terraform && terraform init -upgrade -backend-config="infra/terraform/local.gcs.backend"
+	@cd infra/terraform && terraform init -upgrade -backend-config="backend/local.gcs.backend"
 
 .PHONY:	plan_terraform_local
 plan_terraform_local:
@@ -58,9 +58,13 @@ plan_terraform_local:
 apply_terraform_local:
 	@terraform -chdir=infra/terraform apply -var-file="tfvars/local.tfvars" --auto-approve
 
+.PHONY:	destroy_terraform_local
+destroy_terraform_local:
+	@terraform -chdir=infra/terraform destroy -var-file="tfvars/local.tfvars" --auto-approve
+
 .PHONY: generate_key_iam
 generate_key_iam:
-	bash deploy_service_account_CICD.sh
+	@bash deploy_service_account_CICD.sh
 
 .PHONY: connect_gke_cli
 connect_gke_cli:
@@ -74,6 +78,30 @@ apply_k8s:
 delete_k8s:
 	@kubectl delete -f infra/k8s
 
+.PHONY: helm_manifest
+helm_manifest:
+	helm get manifest event-driven-api > trash.log
+
+
+.PHONY: helm_update
+helm_update:
+	helm dependency update infra/helm
+# 	# 2. Déployer la modification
+	helm upgrade --install event-driven-api infra/helm \
+	--namespace default \
+	--create-namespace \
+	--values infra/helm/values.yaml
+
+.PHONY: check_domain
+check_domain:
+	@gcloud domains registrations describe templatejojotest.com
+	@gcloud domains registrations describe templatejojotest.com --format="yaml(dnsSettings.customDns.nameServers)" # To modify
+	@gcloud dns managed-zones describe template-dns --project=dataascode --format="value(nameServers)" # Real one
+
+.PHONY: fix_nameservers_developer
+fix_nameservers_developer:
+	@gcloud domains registrations configure dns templatejojotest.com \
+		--name-servers="ns-cloud-d1.googledomains.com,ns-cloud-d2.googledomains.com,ns-cloud-d3.googledomains.com,ns-cloud-d4.googledomains.com"
 .PHONY: help
 help:
 	@uv run python -c "import re; \
