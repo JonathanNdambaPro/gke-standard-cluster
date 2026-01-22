@@ -119,4 +119,3 @@ variable "yearly_price_units" {
   description = "Maximum price in USD you are willing to pay for the domain"
   default     = "12"
 }
-

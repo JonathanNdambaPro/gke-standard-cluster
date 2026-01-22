@@ -1,6 +1,6 @@
 # eventarc
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 No requirements.
@@ -26,7 +26,6 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Name of the cluster gke | `string` | n/a | yes |
-| <a name="input_event_type"></a> [event\_type](#input\_event\_type) | The event type to trigger on (default: Pub/Sub message published) | `string` | `"google.cloud.pubsub.topic.v1.messagePublished"` | no |
 | <a name="input_eventarc_name"></a> [eventarc\_name](#input\_eventarc\_name) | The service account to use to execute the Eventarc triggers | `string` | n/a | yes |
 | <a name="input_gke_run_service_path"></a> [gke\_run\_service\_path](#input\_gke\_run\_service\_path) | Path within the service to send events to | `string` | `"/"` | no |
 | <a name="input_label"></a> [label](#input\_label) | Label for the Eventarc trigger | `string` | n/a | yes |
@@ -43,4 +42,4 @@ No modules.
 |------|-------------|
 | <a name="output_gke_trigger_id"></a> [gke\_trigger\_id](#output\_gke\_trigger\_id) | IDs of the created GKE Eventarc triggers |
 | <a name="output_gke_trigger_name"></a> [gke\_trigger\_name](#output\_gke\_trigger\_name) | Names of the created GKE Eventarc triggers |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

@@ -44,23 +44,19 @@ No resources.
 | <a name="input_contact_state"></a> [contact\_state](#input\_contact\_state) | n/a | `string` | n/a | yes |
 | <a name="input_create_domain_registration"></a> [create\_domain\_registration](#input\_create\_domain\_registration) | Whether to create the Cloud Domain registration | `bool` | `true` | no |
 | <a name="input_dns_name"></a> [dns\_name](#input\_dns\_name) | value | `string` | n/a | yes |
-| <a name="input_event_type"></a> [event\_type](#input\_event\_type) | The event type to trigger on (default: Pub/Sub message published) | `string` | `"google.cloud.pubsub.topic.v1.messagePublished"` | no |
-| <a name="input_eventarc_name"></a> [eventarc\_name](#input\_eventarc\_name) | Name of the Eventarc trigger | `string` | n/a | yes |
+| <a name="input_event_pipelines"></a> [event\_pipelines](#input\_event\_pipelines) | Map of event pipelines. Key is used as trigger name suffix. | <pre>map(object({<br/>    topic_name = string<br/>    path       = string<br/>    label      = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_eventarc_service_name"></a> [eventarc\_service\_name](#input\_eventarc\_service\_name) | Name of the Kubernetes service receiving events | `string` | n/a | yes |
 | <a name="input_eventarc_trigger_namespace"></a> [eventarc\_trigger\_namespace](#input\_eventarc\_trigger\_namespace) | Namespace of the Kubernetes service | `string` | `"default"` | no |
 | <a name="input_gke_cluster_name"></a> [gke\_cluster\_name](#input\_gke\_cluster\_name) | value | `string` | n/a | yes |
-| <a name="input_gke_run_service_path"></a> [gke\_run\_service\_path](#input\_gke\_run\_service\_path) | Path for the GKE service receiving events | `string` | `"/"` | no |
 | <a name="input_gke_service_account_name"></a> [gke\_service\_account\_name](#input\_gke\_service\_account\_name) | value | `string` | n/a | yes |
 | <a name="input_google_dns_managed_zone_ressource_name"></a> [google\_dns\_managed\_zone\_ressource\_name](#input\_google\_dns\_managed\_zone\_ressource\_name) | value | `string` | n/a | yes |
 | <a name="input_ip_address_ressource_name"></a> [ip\_address\_ressource\_name](#input\_ip\_address\_ressource\_name) | value | `string` | n/a | yes |
-| <a name="input_label"></a> [label](#input\_label) | Label for the Eventarc trigger | `string` | n/a | yes |
 | <a name="input_project"></a> [project](#input\_project) | GCP project ID where all resources will be created. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | GCP region where regional resources will be deployed. | `string` | n/a | yes |
 | <a name="input_security_policy_name"></a> [security\_policy\_name](#input\_security\_policy\_name) | The name of the Cloud Armor security policy | `string` | `"cloud-armor-policy"` | no |
 | <a name="input_ssl_policy_name"></a> [ssl\_policy\_name](#input\_ssl\_policy\_name) | value | `string` | n/a | yes |
 | <a name="input_subnet_ip_cidr_range"></a> [subnet\_ip\_cidr\_range](#input\_subnet\_ip\_cidr\_range) | value | `string` | n/a | yes |
 | <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | value | `string` | n/a | yes |
-| <a name="input_topic_name"></a> [topic\_name](#input\_topic\_name) | Pub/Sub topic name. | `string` | n/a | yes |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | value | `string` | n/a | yes |
 | <a name="input_yearly_price_units"></a> [yearly\_price\_units](#input\_yearly\_price\_units) | Maximum price in USD you are willing to pay for the domain | `string` | `"12"` | no |
 
