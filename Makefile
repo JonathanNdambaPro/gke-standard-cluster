@@ -2,7 +2,7 @@
 install: ## Install the virtual environment and install the pre-commit hooks
 	@echo "🚀 Creating virtual environment using uv"
 	@uv sync --all-groups
-	@uv run pre-commit install --hook-type commit-msg
+	@uv run pre-commit install --hook-type commit-msg --hook-type pre-push
 
 .PHONY: check
 check: ## Run code quality tools.
