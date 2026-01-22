@@ -194,7 +194,7 @@ jobs:
       - name: Initialize Eventarc GKE destinations
         run: |
           gcloud config set eventarc/location ${{ env.GCP_ZONE }}
-          gcloud eventarc gke-destinations init --project=${{ env.GCP_PROJECT_ID }}
+          gcloud eventarc gke-destinations init --project=${{ env.GCP_PROJECT_ID }} --quiet
 
       # Deployment of eventarc (after K8s service is ready)
       - name: Terraform apply eventarc
