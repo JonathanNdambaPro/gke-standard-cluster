@@ -13,11 +13,5 @@ resource "google_dns_record_set" "default" {
   managed_zone = google_dns_managed_zone.template-dns.name
   type         = "A"
   ttl          = 300
-
-  routing_policy {
-    wrr {
-      weight  = 1
-      rrdatas = var.extern_ip_adress
-    }
-  }
+  rrdatas      = var.extern_ip_adress
 }
