@@ -112,7 +112,6 @@ jobs:
         run: |
           terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" \
           -target=${{ env.TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY }} \
-          -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
 
@@ -121,7 +120,6 @@ jobs:
         run: |
           terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
           -target=${{ env.TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY }} \
-          -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
 
@@ -157,7 +155,6 @@ jobs:
       - name: Terraform plan
         run: |
           terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" \
-          -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
 
@@ -165,7 +162,6 @@ jobs:
       - name: Terraform apply
         run: |
           terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" \
-          -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
 
