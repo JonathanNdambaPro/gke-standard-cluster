@@ -197,5 +197,25 @@ jobs:
       - name: Set up the environment
         uses: ./.github/actions/setup-python-env
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.12.1
+
+      - name: Install terraform-docs
+        run: |
+          curl -sSLo terraform-docs.tar.gz https://terraform-docs.io/dl/v0.19.0/terraform-docs-v0.19.0-linux-amd64.tar.gz
+          tar -xzf terraform-docs.tar.gz
+          sudo mv terraform-docs /usr/local/bin/
+          rm terraform-docs.tar.gz
+
+      - name: Install hadolint
+        run: |
+          curl -sSL https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 -o hadolint
+          chmod +x hadolint
+          sudo mv hadolint /usr/local/bin/
+
       - name: Run checks
         run: make check
+        env:
+          SKIP: infracost_breakdown
