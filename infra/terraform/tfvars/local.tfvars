@@ -35,15 +35,15 @@ contact_country_code = "FR"
 create_domain_registration = false
 
 # Pub/Sub Configuration
-topic_name = "event-ingestion-dev"
+topic_name = "event-ingestion-local"
 
 # Eventarc Configuration
-eventarc_name = "event-trigger-dev"
-label         = "event-driven-dev"
+eventarc_name = "event-trigger-local"
+label         = "event-driven-local"
 
 # Cloud Run / GKE Service Path
 gke_run_service_path       = "/api/v1/ingest_event"
-eventarc_service_name      = "event-driven-api-dev"
+eventarc_service_name      = "event-driven-api-local"
 eventarc_trigger_namespace = "local"
 
 # Artifactory
