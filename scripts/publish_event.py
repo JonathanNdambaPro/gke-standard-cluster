@@ -32,7 +32,7 @@ RETRY_CONFIG = api_retry.Retry(
     initial=INITIAL_DELAY,
     maximum=MAX_DELAY,
     multiplier=MULTIPLIER,
-    deadline=300.0,  # 5 minutes total timeout
+    deadline=3600.0,  # 60 minutes total timeout
 )
 
 
