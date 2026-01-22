@@ -161,6 +161,7 @@ jobs:
         run: |
           terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
           -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
+          -target=module.google-api \
           -target=module.network \
           -target=module.security \
           -target=module.service-account \
@@ -194,6 +195,14 @@ jobs:
         run: |
           kubectl wait --for=condition=available deployment/event-driven-api \
           --namespace=${{ steps.ns.outputs.namespace }} --timeout=300s
+
+      # Initialize Eventarc GKE destinations (required for GKE triggers)
+      - name: Initialize Eventarc GKE destinations
+        run: |
+          gcloud eventarc gke-destinations init \
+            --project=${{ env.GCP_PROJECT_ID }} \
+            --location=${{ env.GCP_ZONE }} \
+            --quiet
 
       # Deployment of eventarc (after K8s service is ready)
       - name: Terraform apply eventarc
