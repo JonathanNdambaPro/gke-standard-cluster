@@ -1,7 +1,7 @@
 .PHONY: install
 install: ## Install the virtual environment and install the pre-commit hooks
 	@echo "🚀 Creating virtual environment using uv"
-	@uv sync
+	@uv sync --all-groups
 	@uv run pre-commit install --hook-type commit-msg
 
 .PHONY: check
@@ -48,7 +48,7 @@ docs: ## Build and serve the documentation
 
 .PHONY:	init_terraform_local
 init_terraform_local:
-	@cd infra/terraform && terraform init -upgrade -backend-config="infra/terraform/local.gcs.backend"
+	@cd infra/terraform && terraform init -upgrade -backend-config="backend/local.gcs.backend"
 
 .PHONY:	plan_terraform_local
 plan_terraform_local:
@@ -58,9 +58,13 @@ plan_terraform_local:
 apply_terraform_local:
 	@terraform -chdir=infra/terraform apply -var-file="tfvars/local.tfvars" --auto-approve
 
+.PHONY:	destroy_terraform_local
+destroy_terraform_local:
+	@terraform -chdir=infra/terraform destroy -var-file="tfvars/local.tfvars" --auto-approve
+
 .PHONY: generate_key_iam
 generate_key_iam:
-	bash deploy_service_account_CICD.sh
+	@bash deploy_service_account_CICD.sh
 
 .PHONY: connect_gke_cli
 connect_gke_cli:

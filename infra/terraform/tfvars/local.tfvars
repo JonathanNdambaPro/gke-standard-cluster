@@ -21,7 +21,8 @@ google_dns_managed_zone_ressource_name = "template-dns"
 dns_name                               = "templatejojotest.com."
 
 # Security
-ssl_policy_name = "production-ssl-policy"
+ssl_policy_name      = "production-ssl-policy"
+security_policy_name = "cloud-armor-policy"
 
 # Service account
 gke_service_account_name = "gke-sa"
@@ -35,3 +36,21 @@ contact_city         = "Vincennes"
 contact_state        = "Ile-de-France"
 contact_postal_code  = "94300"
 contact_country_code = "FR"
+
+create_domain_registration = false
+
+name_ressource_cloud_run = "event-driven-api-dev"
+
+# Pub/Sub Configuration
+topic_name = "event-ingestion-dev"
+
+# Eventarc Configuration
+eventarc_name = "event-trigger-dev"
+label         = "event-driven-dev"
+# Cloud Run / GKE Service Path
+gke_run_service_path       = "/api/v1/ingest_event"
+eventarc_service_name      = "event-driven-api-dev"
+eventarc_trigger_namespace = "local"
+
+# Artifactory
+artifactory_repository_id = "docker-repository"

@@ -3,7 +3,7 @@ name: Backend Docker Build
 on:
   push:
     branches:
-      - "develop"
+      - "**"
     paths:
       - "api/**"
       - "infra/**"
@@ -13,7 +13,7 @@ on:
       - ".github/workflows/main.yml"
   pull_request:
     branches:
-      - "develop"
+      - "**"
     types: [opened, synchronize, reopened, ready_for_review]
 
 env:
@@ -23,6 +23,7 @@ env:
   IMAGE_NAME: event-driven
   REPO_ARTIFACTORY: event-driven-gcp
   TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY: module.artifactory
+  GKE_CLUSTER_NAME: template-gke-cluster
 
 jobs:
   tests-and-type-check:
@@ -50,9 +51,9 @@ jobs:
         run: uv run ty check
 
 
-      - name: Upload coverage reports to Codecov with GitHub Action on Python 3.11
+      - name: Upload coverage reports to Codecov with GitHub Action on Python 3.13
         uses: codecov/codecov-action@v4
-        if: ${{ matrix.python-version == '3.11' }}
+        if: ${{ matrix.python-version == '3.13' }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
@@ -63,6 +64,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Calculate Namespace
+        id: ns
+        run: |
+          # Determine the reference name (branch name)
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            REF_NAME="${{ github.head_ref }}"
+          else
+            REF_NAME="${{ github.ref_name }}"
+          fi
+
+          if [ "$REF_NAME" == "main" ]; then
+            echo "namespace=default" >> $GITHUB_OUTPUT
+            echo "register_dns=true" >> $GITHUB_OUTPUT
+          else
+            # Sanitize branch name: lowercase, replace / with -, remove invalid chars
+            SANITIZED_NAME=$(echo "$REF_NAME" | tr '[:upper:]' '[:lower:]' | tr '/' '-' | sed 's/[^a-z0-9-]//g')
+            echo "namespace=$SANITIZED_NAME" >> $GITHUB_OUTPUT
+            echo "register_dns=false" >> $GITHUB_OUTPUT
+          fi
 
       # Authenticate with Google Cloud
       - name: Authenticate with Google Cloud
@@ -89,26 +110,26 @@ jobs:
       # Plannification of terraform
       - name: Terraform plan for artifatory
         run: |
-          cd infra && terraform plan \
+          terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" --auto-approve \
           -target=${{ env.TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY }} \
           -var-file="variables/dev.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
-          -var "environment=dev" \
           -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "name_image_docker=${{ env.IMAGE_NAME }}" \
+          -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
 
       # déploiement of terraform
       - name: Terraform apply for for artifatory
         run: |
-          cd infra && terraform apply \
+          terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
           --auto-approve \
           -target=${{ env.TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY }} \
           -var-file="variables/dev.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
-          -var "environment=dev" \
           -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "name_image_docker=${{ env.IMAGE_NAME }}" \
+          -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
 
       # Génération du tag avec la date
@@ -142,24 +163,42 @@ jobs:
       # Planification of terraform
       - name: Terraform plan
         run: |
-          cd infra && terraform plan \
+          terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" --auto-approve \
           -var-file="variables/dev.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
-          -var "environment=dev" \
           -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "name_image_docker=${{ env.IMAGE_NAME }}" \
+          -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
 
       # Deployment of terraform
       - name: Terraform apply
         run: |
-          cd infra && terraform apply --auto-approve \
+          terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
           -var-file="variables/dev.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
-          -var "environment=dev" \
           -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "name_image_docker=${{ env.IMAGE_NAME }}" \
+          -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
+
+      - name: Get GKE Credentials
+        run: |
+          gcloud container clusters get-credentials ${{ env.GKE_CLUSTER_NAME }} --zone ${{ env.GCP_ZONE }} --project ${{ env.GCP_PROJECT_ID }}
+
+      - name: Helm deployment
+        run: |
+          NAMESPACE="${{ steps.ns.outputs.namespace }}"
+          echo "Deploying to namespace: $NAMESPACE"
+
+          helm upgrade --install event-driven-api infra/helm \
+          --namespace $NAMESPACE \
+          --create-namespace \
+          --set image.repository=${{ env.GCP_ZONE}}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPO_ARTIFACTORY }}/${{ env.IMAGE_NAME }} \
+          --set image.tag=${GITHUB_SHA::7} \
+          --set ingress.registerDns=${{ steps.ns.outputs.register_dns }} \
+          --values infra/helm/values.yaml
+
 
   quality:
     runs-on: ubuntu-latest

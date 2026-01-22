@@ -151,6 +151,13 @@ This project now includes a production-ready GKE Standard cluster setup via Terr
     make apply_k8s
     ```
 
+### ⚠️ Critical Warning: Infrastructure Destruction
+
+> [!WARNING]
+> **Manual Deletion Required for Cloud Domains**
+> Terraform is configured to **abandon** the `google_clouddomains_registration` resource upon destruction to prevent accidental loss of domain ownership.
+> **You must delete the Domain and DNS Zone manually** in the Google Cloud Console if you wish to stop billing/ownership. Terraform will NOT delete them.
+
 ### Troubleshooting Ingress 🕵️‍♂️
 
 If you see a `502 Bad Gateway` or `Server Error`:

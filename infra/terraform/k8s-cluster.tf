@@ -14,8 +14,9 @@ module "cloud-dns" {
 }
 
 module "security" {
-  source          = "./modules/security"
-  ssl_policy_name = var.ssl_policy_name
+  source               = "./modules/security"
+  ssl_policy_name      = var.ssl_policy_name
+  security_policy_name = var.security_policy_name
 }
 
 module "service-account" {
@@ -25,9 +26,11 @@ module "service-account" {
 }
 
 module "cloud-domains" {
-  source       = "./modules/cloud-domains"
-  domain_name  = trimsuffix(var.dns_name, ".") # Cloud Domains doesn't want the trailing dot
-  name_servers = module.cloud-dns.nameservers
+  source                     = "./modules/cloud-domains"
+  create_domain_registration = var.create_domain_registration
+  domain_name                = trimsuffix(var.dns_name, ".") # Cloud Domains doesn't want the trailing dot
+  name_servers               = module.cloud-dns.nameservers
+  yearly_price_units         = var.yearly_price_units
 
   contact_name         = var.contact_name
   contact_email        = var.contact_email
@@ -39,12 +42,38 @@ module "cloud-domains" {
   contact_address_line = var.contact_address_line
 }
 
+module "pubsub" {
+  source     = "./modules/pubsub"
+  topic_name = var.topic_name
+}
+
+module "eventarc" {
+  source                = "./modules/eventarc"
+  project               = var.project
+  region                = var.region
+  service_account_email = module.service-account.service_account_name_email
+  label                 = var.label
+  source_topic_name     = module.pubsub.pubsub_topic_name
+  eventarc_name         = var.eventarc_name
+  cluster               = module.gke-cluster.gke_cluster_name
+  service               = var.eventarc_service_name
+  namespace             = var.eventarc_trigger_namespace
+  gke_run_service_path  = var.gke_run_service_path
+  event_type            = var.event_type
+
+  depends_on = [module.service-account, module.pubsub]
+}
+
 module "gke-cluster" {
-  source             = "./modules/gke-cluster"
-  gke_cluster_name   = var.gke_cluster_name
-  gke_nood_pool_name = var.gke_nood_pool_name
-  vpc                = module.network.vpc
-  subnet             = module.network.subnet
-  email              = module.service-account.service_account_name_email
-  machine_type       = var.machine_type
+  source           = "./modules/gke-cluster"
+  gke_cluster_name = var.gke_cluster_name
+  vpc              = module.network.vpc
+  subnet           = module.network.subnet
+  email            = module.service-account.service_account_name_email
+}
+
+module "artifactory" {
+  source                    = "./modules/artifactory"
+  region                    = var.region
+  artifactory_repository_id = var.artifactory_repository_id
 }
