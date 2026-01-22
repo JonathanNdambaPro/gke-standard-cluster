@@ -12,25 +12,29 @@
         <meta name="author" content="Jonathan Ndamba">
       
       
+        <link rel="canonical" href="https://jojo.github.io/event-driven-gcp/configuration-sync/">
+      
+      
+        <link rel="prev" href="../kubernetes/">
       
       
       
         
       
       
-      <link rel="icon" href="/event-driven-gcp/assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Event-Driven GCP</title>
+        <title>Configuration - Event-Driven GCP</title>
       
     
     
-      <link rel="stylesheet" href="/event-driven-gcp/assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="/event-driven-gcp/assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,9 +53,9 @@
       
     
     
-      <link rel="stylesheet" href="/event-driven-gcp/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("/event-driven-gcp/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -75,6 +79,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#configuration-sync" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -87,7 +96,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/event-driven-gcp/." title="Event-Driven GCP" class="md-header__button md-logo" aria-label="Event-Driven GCP" data-md-component="logo">
+    <a href=".." title="Event-Driven GCP" class="md-header__button md-logo" aria-label="Event-Driven GCP" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -107,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Configuration
             
           </span>
         </div>
@@ -223,7 +232,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/event-driven-gcp/." title="Event-Driven GCP" class="md-nav__button md-logo" aria-label="Event-Driven GCP" data-md-component="logo">
+    <a href=".." title="Event-Driven GCP" class="md-nav__button md-logo" aria-label="Event-Driven GCP" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -253,7 +262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/event-driven-gcp/." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -280,7 +289,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/event-driven-gcp/infrastructure/" class="md-nav__link">
+      <a href="../infrastructure/" class="md-nav__link">
         
   
   
@@ -307,7 +316,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/event-driven-gcp/kubernetes/" class="md-nav__link">
+      <a href="../kubernetes/" class="md-nav__link">
         
   
   
@@ -331,10 +340,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/event-driven-gcp/configuration-sync/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -350,6 +386,181 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#source-of-truth-configyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source of Truth: config.yaml
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mapping-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mapping Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Details
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="File Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#githubworkflowsmainyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        .github/workflows/main.yml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infraterraformtfvarsmaintfvars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        infra/terraform/tfvars/main.tfvars
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrahelmvaluesyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        infra/helm/values.yaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modification Checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modification Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#change-gcp-project-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change GCP Project Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change Region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-gke-cluster-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change GKE Cluster Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-artifact-registry-repository-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change Artifact Registry Repository Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-kubernetes-service-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change Kubernetes Service Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Important Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -371,6 +582,171 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#source-of-truth-configyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source of Truth: config.yaml
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mapping-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mapping Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Details
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="File Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#githubworkflowsmainyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        .github/workflows/main.yml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infraterraformtfvarsmaintfvars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        infra/terraform/tfvars/main.tfvars
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrahelmvaluesyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        infra/helm/values.yaml
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modification Checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modification Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#change-gcp-project-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change GCP Project Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change Region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-gke-cluster-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change GKE Cluster Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-artifact-registry-repository-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change Artifact Registry Repository Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-kubernetes-service-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change Kubernetes Service Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Important Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -383,8 +759,152 @@
               
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  
+  
+
+
+<h1 id="configuration-sync">Configuration Sync<a class="headerlink" href="#configuration-sync" title="Permanent link">&para;</a></h1>
+<h2 id="source-of-truth-configyaml">Source of Truth: <code>config.yaml</code><a class="headerlink" href="#source-of-truth-configyaml" title="Permanent link">&para;</a></h2>
+<p>The <code>config.yaml</code> file at the project root is the <strong>source of truth</strong> for shared values. The CI/CD workflow automatically parses it using <code>yq</code>.</p>
+<pre><code class="language-yaml"># Central project configuration
+gcp:
+  project_id: dataascode
+  region: europe-west1
+
+gke:
+  cluster_name: template-gke-cluster
+
+artifactory:
+  repository_id: docker-repository
+
+app:
+  image_name: event-driven
+  service_name: event-driven-api  # Must match fullnameOverride in values.yaml
+</code></pre>
+<p><strong>⚠️ The following files must be manually synchronized with <code>config.yaml</code>:</strong>
+- <code>infra/terraform/tfvars/main.tfvars</code>
+- <code>infra/terraform/tfvars/local.tfvars</code>
+- <code>infra/helm/values.yaml</code></p>
+<h2 id="mapping-table">Mapping Table<a class="headerlink" href="#mapping-table" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th><code>.github/workflows/main.yml</code></th>
+<th><code>infra/terraform/tfvars/main.tfvars</code></th>
+<th><code>infra/helm/values.yaml</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Project ID</strong></td>
+<td><code>GCP_PROJECT_ID: dataascode</code></td>
+<td><code>project = "dataascode"</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Region</strong></td>
+<td><code>GCP_ZONE: europe-west1</code></td>
+<td><code>region = "europe-west1"</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Cluster Name</strong></td>
+<td><code>GKE_CLUSTER_NAME: template-gke-cluster</code></td>
+<td><code>gke_cluster_name = "template-gke-cluster"</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Artifact Repository</strong></td>
+<td><code>REPO_ARTIFACTORY: docker-repository</code></td>
+<td><code>artifactory_repository_id = "docker-repository"</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>K8s Service Name</strong></td>
+<td>-</td>
+<td><code>eventarc_service_name = "event-driven-api"</code></td>
+<td><code>fullnameOverride: "event-driven-api"</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="file-details">File Details<a class="headerlink" href="#file-details" title="Permanent link">&para;</a></h2>
+<h3 id="githubworkflowsmainyml"><code>.github/workflows/main.yml</code><a class="headerlink" href="#githubworkflowsmainyml" title="Permanent link">&para;</a></h3>
+<pre><code class="language-yaml">env:
+  GCP_PROJECT_ID: dataascode          # → main.tfvars: project
+  GCP_ZONE: europe-west1              # → main.tfvars: region
+  REPO_ARTIFACTORY: docker-repository # → main.tfvars: artifactory_repository_id
+  GKE_CLUSTER_NAME: template-gke-cluster # → main.tfvars: gke_cluster_name
+</code></pre>
+<h3 id="infraterraformtfvarsmaintfvars"><code>infra/terraform/tfvars/main.tfvars</code><a class="headerlink" href="#infraterraformtfvarsmaintfvars" title="Permanent link">&para;</a></h3>
+<pre><code class="language-hcl">project = &quot;dataascode&quot;                      # → main.yml: GCP_PROJECT_ID
+region  = &quot;europe-west1&quot;                    # → main.yml: GCP_ZONE
+gke_cluster_name = &quot;template-gke-cluster&quot;   # → main.yml: GKE_CLUSTER_NAME
+artifactory_repository_id = &quot;docker-repository&quot; # → main.yml: REPO_ARTIFACTORY
+eventarc_service_name = &quot;event-driven-api&quot;  # → values.yaml: fullnameOverride
+</code></pre>
+<h3 id="infrahelmvaluesyaml"><code>infra/helm/values.yaml</code><a class="headerlink" href="#infrahelmvaluesyaml" title="Permanent link">&para;</a></h3>
+<pre><code class="language-yaml">fullnameOverride: &quot;event-driven-api&quot;  # → main.tfvars: eventarc_service_name
+</code></pre>
+<h2 id="modification-checklist">Modification Checklist<a class="headerlink" href="#modification-checklist" title="Permanent link">&para;</a></h2>
+<h3 id="change-gcp-project-name">Change GCP Project Name<a class="headerlink" href="#change-gcp-project-name" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <code>.github/workflows/main.yml</code> → <code>GCP_PROJECT_ID</code></li>
+<li>[ ] <code>infra/terraform/tfvars/main.tfvars</code> → <code>project</code></li>
+<li>[ ] <code>infra/terraform/tfvars/local.tfvars</code> → <code>project</code></li>
+</ul>
+<h3 id="change-region">Change Region<a class="headerlink" href="#change-region" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <code>.github/workflows/main.yml</code> → <code>GCP_ZONE</code></li>
+<li>[ ] <code>infra/terraform/tfvars/main.tfvars</code> → <code>region</code></li>
+<li>[ ] <code>infra/terraform/tfvars/local.tfvars</code> → <code>region</code></li>
+</ul>
+<h3 id="change-gke-cluster-name">Change GKE Cluster Name<a class="headerlink" href="#change-gke-cluster-name" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <code>.github/workflows/main.yml</code> → <code>GKE_CLUSTER_NAME</code></li>
+<li>[ ] <code>infra/terraform/tfvars/main.tfvars</code> → <code>gke_cluster_name</code></li>
+<li>[ ] <code>infra/terraform/tfvars/local.tfvars</code> → <code>gke_cluster_name</code></li>
+</ul>
+<h3 id="change-artifact-registry-repository-name">Change Artifact Registry Repository Name<a class="headerlink" href="#change-artifact-registry-repository-name" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <code>.github/workflows/main.yml</code> → <code>REPO_ARTIFACTORY</code></li>
+<li>[ ] <code>infra/terraform/tfvars/main.tfvars</code> → <code>artifactory_repository_id</code></li>
+<li>[ ] <code>infra/terraform/tfvars/local.tfvars</code> → <code>artifactory_repository_id</code></li>
+</ul>
+<h3 id="change-kubernetes-service-name">Change Kubernetes Service Name<a class="headerlink" href="#change-kubernetes-service-name" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] <code>infra/terraform/tfvars/main.tfvars</code> → <code>eventarc_service_name</code></li>
+<li>[ ] <code>infra/terraform/tfvars/local.tfvars</code> → <code>eventarc_service_name</code></li>
+<li>[ ] <code>infra/helm/values.yaml</code> → <code>fullnameOverride</code></li>
+</ul>
+<h2 id="important-notes">⚠️ Important Notes<a class="headerlink" href="#important-notes" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>K8s service name</strong> (<code>eventarc_service_name</code> / <code>fullnameOverride</code>) must be identical because Eventarc uses this name to route events to the correct service.</p>
+</li>
+<li>
+<p><strong>Artifact Registry repository</strong> must exist before pushing Docker images.</p>
+</li>
+<li>
+<p><strong>GKE cluster</strong> must exist before Helm deployment.</p>
+</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -452,10 +972,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "/event-driven-gcp/", "features": [], "search": "/event-driven-gcp/assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="/event-driven-gcp/assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

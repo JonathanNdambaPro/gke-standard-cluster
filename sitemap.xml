@@ -2,14 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://jojo.github.io/event-driven-gcp/</loc>
-         <lastmod>2025-12-31</lastmod>
+         <lastmod>2026-01-22</lastmod>
+    </url>
+    <url>
+         <loc>https://jojo.github.io/event-driven-gcp/configuration-sync/</loc>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://jojo.github.io/event-driven-gcp/infrastructure/</loc>
-         <lastmod>2025-12-31</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
     <url>
          <loc>https://jojo.github.io/event-driven-gcp/kubernetes/</loc>
-         <lastmod>2025-12-31</lastmod>
+         <lastmod>2026-01-22</lastmod>
     </url>
 </urlset>
