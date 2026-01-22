@@ -21,6 +21,11 @@ resource "google_project_iam_member" "bq_job_user" {
   member  = "serviceAccount:${google_service_account.gke_sa.email}"
 }
 
+resource "google_project_iam_member" "gke_secret_accessor" {
+  project = var.project
+  role    = "roles/secretmanager.secretAccessor"
+  member  = "serviceAccount:${google_service_account.gke_sa.email}"
+}
 
 resource "google_service_account" "eventarc_triggers" {
   account_id   = "eventarc-triggers-gke"
