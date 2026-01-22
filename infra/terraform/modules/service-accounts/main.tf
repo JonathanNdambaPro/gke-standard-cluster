@@ -73,30 +73,28 @@ resource "google_project_iam_member" "eventarc_sa_admin" {
   member  = "serviceAccount:${google_service_account.eventarc_triggers.email}"
 }
 
-# Eventarc Service Agent - required for GKE destinations initialization
-# This is Google's managed service account, not the custom one above
-data "google_project" "current" {
-  project_id = var.project
-}
-
-locals {
-  eventarc_service_agent = "service-${data.google_project.current.number}@gcp-sa-eventarc.iam.gserviceaccount.com"
+# Eventarc Service Agent - creates Google's managed service account for GKE destinations
+# This replaces the need for "gcloud eventarc gke-destinations init"
+resource "google_project_service_identity" "eventarc_agent" {
+  provider = google-beta
+  project  = var.project
+  service  = "eventarc.googleapis.com"
 }
 
 resource "google_project_iam_member" "eventarc_agent_compute_viewer" {
   project = var.project
   role    = "roles/compute.viewer"
-  member  = "serviceAccount:${local.eventarc_service_agent}"
+  member  = google_project_service_identity.eventarc_agent.member
 }
 
 resource "google_project_iam_member" "eventarc_agent_container_developer" {
   project = var.project
   role    = "roles/container.developer"
-  member  = "serviceAccount:${local.eventarc_service_agent}"
+  member  = google_project_service_identity.eventarc_agent.member
 }
 
 resource "google_project_iam_member" "eventarc_agent_sa_admin" {
   project = var.project
   role    = "roles/iam.serviceAccountAdmin"
-  member  = "serviceAccount:${local.eventarc_service_agent}"
+  member  = google_project_service_identity.eventarc_agent.member
 }
