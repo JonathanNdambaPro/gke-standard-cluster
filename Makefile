@@ -78,6 +78,10 @@ apply_k8s:
 delete_k8s:
 	@kubectl delete -f infra/k8s
 
+.PHONY: helm_manifest
+helm_manifest:
+	helm get manifest event-driven-api > trash.log
+
 .PHONY: help
 help:
 	@uv run python -c "import re; \

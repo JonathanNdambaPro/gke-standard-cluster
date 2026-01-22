@@ -9,6 +9,16 @@ spec:
   logging: # HTTP access logging: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#http_logging
     enable: {{ .Values.backendConfig.logging.enable }}
     sampleRate: {{ .Values.backendConfig.logging.sampleRate }}
+  {{- with .Values.backendConfig.healthCheck }}
+  healthCheck:
+    checkIntervalSec: {{ .checkIntervalSec }}
+    timeoutSec: {{ .timeoutSec }}
+    healthyThreshold: {{ .healthyThreshold }}
+    unhealthyThreshold: {{ .unhealthyThreshold }}
+    type: {{ .type }}
+    requestPath: {{ .requestPath }}
+    port: {{ .port }}
+  {{- end }}
   cdn:
     enabled: {{ .Values.backendConfig.cdn.enabled }}
     cachePolicy:

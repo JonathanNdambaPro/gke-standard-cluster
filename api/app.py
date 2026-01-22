@@ -38,4 +38,11 @@ app = FastAPI(
     },
 )
 
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for GCE Load Balancer."""
+    return {"status": "healthy"}
+
+
 app.include_router(ingest_delta.router, prefix=settings.API_V1_STR)
