@@ -17,8 +17,9 @@ fullnameOverride: "event-driven-api"
 serviceAccount:
   create: true
   automount: true
-  annotations: {}
-  name: ""
+  annotations:
+    iam.gke.io/gcp-service-account: gke-sa@dataascode.iam.gserviceaccount.com
+  name: "event-driven-api-sa"
 
 podAnnotations: {}
 podLabels: {}

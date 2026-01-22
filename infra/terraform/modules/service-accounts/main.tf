@@ -27,6 +27,13 @@ resource "google_project_iam_member" "gke_secret_accessor" {
   member  = "serviceAccount:${google_service_account.gke_sa.email}"
 }
 
+# Workload Identity binding - allows K8s service account to impersonate GCP service account
+resource "google_service_account_iam_member" "workload_identity_binding" {
+  service_account_id = google_service_account.gke_sa.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${var.project}.svc.id.goog[default/event-driven-api-sa]"
+}
+
 resource "google_service_account" "eventarc_triggers" {
   account_id   = "eventarc-triggers-gke"
   display_name = "Eventarc Triggers Service Account"
