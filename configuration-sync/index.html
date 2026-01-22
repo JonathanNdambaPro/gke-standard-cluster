@@ -845,6 +845,15 @@ region  = &quot;europe-west1&quot;                    # → main.yml: GCP_ZONE
 gke_cluster_name = &quot;template-gke-cluster&quot;   # → main.yml: GKE_CLUSTER_NAME
 artifactory_repository_id = &quot;docker-repository&quot; # → main.yml: REPO_ARTIFACTORY
 eventarc_service_name = &quot;event-driven-api&quot;  # → values.yaml: fullnameOverride
+
+# Event pipelines - add new topics/triggers here
+event_pipelines = {
+  ingest = {
+    topic_name = &quot;event-ingestion&quot;
+    path       = &quot;/api/v1/ingest_event&quot;
+    label      = &quot;event-driven-ingest&quot;
+  }
+}
 </code></pre>
 <h3 id="infrahelmvaluesyaml"><code>infra/helm/values.yaml</code><a class="headerlink" href="#infrahelmvaluesyaml" title="Permanent link">&para;</a></h3>
 <pre><code class="language-yaml">fullnameOverride: &quot;event-driven-api&quot;  # → main.tfvars: eventarc_service_name
