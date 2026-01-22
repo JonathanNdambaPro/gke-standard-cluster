@@ -17,13 +17,9 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 env:
-  GCP_PROJECT_ID: dataascode
-  GCP_ZONE: europe-west1
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-  IMAGE_NAME: event-driven
-  REPO_ARTIFACTORY: docker-repository
   TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY: module.artifactory
-  GKE_CLUSTER_NAME: template-gke-cluster
+  CONFIG_FILE: config.yaml
 
 jobs:
   tests-and-type-check:
@@ -64,6 +60,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Load config from config.yaml
+        id: config
+        run: |
+          echo "GCP_PROJECT_ID=$(yq '.gcp.project_id' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
+          echo "GCP_ZONE=$(yq '.gcp.region' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
+          echo "GKE_CLUSTER_NAME=$(yq '.gke.cluster_name' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
+          echo "REPO_ARTIFACTORY=$(yq '.artifactory.repository_id' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$(yq '.app.image_name' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
 
       - name: Calculate Namespace
         id: ns

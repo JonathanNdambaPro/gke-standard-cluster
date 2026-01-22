@@ -1,0 +1,16 @@
+# Central project configuration
+# This file is the source of truth for shared values
+
+gcp:
+  project_id: dataascode
+  region: europe-west1
+
+gke:
+  cluster_name: template-gke-cluster
+
+artifactory:
+  repository_id: docker-repository
+
+app:
+  image_name: event-driven
+  service_name: event-driven-api  # Must match fullnameOverride in values.yaml
