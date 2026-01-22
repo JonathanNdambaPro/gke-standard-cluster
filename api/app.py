@@ -39,10 +39,10 @@ app = FastAPI(
 )
 
 
-@app.get("/health")
+@app.get("/")
 async def health_check():
-    """Health check endpoint for GCE Load Balancer."""
-    return {"status": "healthy"}
+    """Health check endpoint for GCE Load Balancer and K8s probes."""
+    return {"status": "healthy", "service": "event-driven-api"}
 
 
 app.include_router(ingest_delta.router, prefix=settings.API_V1_STR)

@@ -65,6 +65,34 @@ resources:
     memory: 512Mi
     cpu: 600m
 
+# Probes configuration
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8000
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+startupProbe:
+  httpGet:
+    path: /
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 30  # 30 * 5s = 150s max startup time
+
 autoscaling:
   enabled: true
   minReplicas: 1
@@ -100,7 +128,7 @@ backendConfig:
     healthyThreshold: 1
     unhealthyThreshold: 2
     type: HTTP
-    requestPath: /health
+    requestPath: /
     port: 8000
 
 frontendConfig:
