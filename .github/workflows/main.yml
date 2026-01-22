@@ -164,15 +164,12 @@ jobs:
           -target=module.pubsub \
           -lock=false
 
-      - name: Install gke-gcloud-auth-plugin
-        run: |
-          sudo apt-get update && sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
-
       - name: Get GKE Credentials
-        run: |
-          gcloud container clusters get-credentials ${{ env.GKE_CLUSTER_NAME }} --zone ${{ env.GCP_ZONE }} --project ${{ env.GCP_PROJECT_ID }}
-        env:
-          USE_GKE_GCLOUD_AUTH_PLUGIN: True
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER_NAME }}
+          location: ${{ env.GCP_ZONE }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
 
       - name: Helm deployment
         run: |
