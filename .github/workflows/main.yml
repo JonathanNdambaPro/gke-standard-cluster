@@ -110,7 +110,7 @@ jobs:
       # Plannification of terraform
       - name: Terraform plan for artifatory
         run: |
-          terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" --auto-approve \
+          terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" \
           -target=${{ env.TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY }} \
           -var-file="variables/dev.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
@@ -163,7 +163,7 @@ jobs:
       # Planification of terraform
       - name: Terraform plan
         run: |
-          terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" --auto-approve \
+          terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" \
           -var-file="variables/dev.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
           -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
