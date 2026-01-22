@@ -112,20 +112,20 @@ jobs:
         run: |
           terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" \
           -target=${{ env.TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY }} \
-          -var-file="variables/dev.tfvars" \
+          -var-file="variables/main.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
           -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "name_image_docker=${{ env.IMAGE_NAME }}" \
           -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
 
-      # déploiement of terraform
+      # Deployement of terraform
       - name: Terraform apply for for artifatory
         run: |
           terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
           --auto-approve \
           -target=${{ env.TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY }} \
-          -var-file="variables/dev.tfvars" \
+          -var-file="variables/main.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
           -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "name_image_docker=${{ env.IMAGE_NAME }}" \
@@ -164,7 +164,7 @@ jobs:
       - name: Terraform plan
         run: |
           terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" \
-          -var-file="variables/dev.tfvars" \
+          -var-file="variables/main.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
           -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "name_image_docker=${{ env.IMAGE_NAME }}" \
@@ -175,7 +175,7 @@ jobs:
       - name: Terraform apply
         run: |
           terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
-          -var-file="variables/dev.tfvars" \
+          -var-file="variables/main.tfvars" \
           -var "github_sha=${GITHUB_SHA::7}" \
           -var "artifactory_repository_id=${{ env.REPO_ARTIFACTORY }}" \
           -var "name_image_docker=${{ env.IMAGE_NAME }}" \
