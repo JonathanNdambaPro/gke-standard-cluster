@@ -2,9 +2,6 @@
 project = "dataascode"
 region  = "europe-west1"
 
-# Environment Variable
-environment = "local"
-
 # Network
 vpc_name                  = "template-vpc"
 subnet_name               = "template-subnet-vpc"
@@ -12,9 +9,7 @@ subnet_ip_cidr_range      = "10.129.0.0/20"
 ip_address_ressource_name = "template-external-ip"
 
 # GKE
-gke_cluster_name   = "template-gke-cluster"
-gke_nood_pool_name = "template-node-pool-1"
-machine_type       = "e2-small"
+gke_cluster_name = "template-gke-cluster"
 
 # Cloud DNS
 google_dns_managed_zone_ressource_name = "template-dns"
@@ -39,14 +34,13 @@ contact_country_code = "FR"
 
 create_domain_registration = false
 
-name_ressource_cloud_run = "event-driven-api-dev"
-
 # Pub/Sub Configuration
 topic_name = "event-ingestion-dev"
 
 # Eventarc Configuration
 eventarc_name = "event-trigger-dev"
 label         = "event-driven-dev"
+
 # Cloud Run / GKE Service Path
 gke_run_service_path       = "/api/v1/ingest_event"
 eventarc_service_name      = "event-driven-api-dev"

@@ -2,9 +2,6 @@
 project = "dataascode"
 region  = "europe-west1"
 
-# Environment Variable
-environment = "dev"
-
 # Network
 vpc_name                  = "template-vpc"
 subnet_name               = "template-subnet-vpc"
@@ -36,9 +33,6 @@ contact_postal_code  = "94300"
 contact_country_code = "FR"
 
 create_domain_registration = false
-
-name_ressource_cloud_run = "event-driven-api-dev"
-container_port           = 8000
 
 # Pub/Sub Configuration
 topic_name = "event-ingestion-dev"
