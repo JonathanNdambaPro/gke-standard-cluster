@@ -161,7 +161,7 @@ jobs:
       # Deployment of terraform
       - name: Terraform apply
         run: |
-          terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" \
+          terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
           -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -lock=false
 

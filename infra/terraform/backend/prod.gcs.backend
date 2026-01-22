@@ -1,2 +1,0 @@
-bucket = "bucket_dataascode"
-prefix = "gke_standard_cluster/prod/gke_standard_cluster.tfstate"
