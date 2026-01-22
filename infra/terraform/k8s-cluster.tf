@@ -57,7 +57,7 @@ module "eventarc" {
   region                = var.region
   service_account_email = module.service-account.service_account_eventarc_name_email
   label                 = each.value.label
-  source_topic_name     = module.pubsub[each.key].pubsub_topic_name
+  source_topic_name     = module.pubsub[each.key].pubsub_topic_id
   eventarc_name         = "trigger-${each.key}"
   cluster               = module.gke-cluster.gke_cluster_name
   service               = var.eventarc_service_name
