@@ -10,7 +10,6 @@ No requirements.
 | Name | Version |
 |------|---------|
 | <a name="provider_google"></a> [google](#provider\_google) | n/a |
-| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | n/a |
 
 ## Modules
 
@@ -20,7 +19,6 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [google-beta_google_project_service_identity.eventarc_agent](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_project_service_identity) | resource |
 | [google_project_iam_member.bq_data_editor](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.bq_job_user](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.eventarc_agent_compute_viewer](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
@@ -36,6 +34,7 @@ No modules.
 | [google_service_account.eventarc_triggers](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
 | [google_service_account.gke_sa](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
 | [google_service_account_iam_member.workload_identity_binding](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_member) | resource |
+| [google_project.current](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
 
 ## Inputs
 
