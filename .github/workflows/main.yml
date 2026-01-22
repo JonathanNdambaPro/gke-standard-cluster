@@ -151,18 +151,17 @@ jobs:
           docker push ${IMAGE_BASE}:${{ steps.date_tag.outputs.date }}
           docker push ${IMAGE_BASE}:latest
 
-      # Planification of terraform
-      - name: Terraform plan
-        run: |
-          terraform -chdir=infra/terraform plan -var-file="tfvars/main.tfvars" \
-          -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
-          -lock=false
-
-      # Deployment of terraform
-      - name: Terraform apply
+      # Deployment of terraform infrastructure (without eventarc - needs K8s service first)
+      - name: Terraform apply infrastructure
         run: |
           terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
           -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
+          -target=module.network \
+          -target=module.security \
+          -target=module.service-account \
+          -target=module.gke-cluster \
+          -target=module.cloud-dns \
+          -target=module.pubsub \
           -lock=false
 
       - name: Get GKE Credentials
@@ -181,6 +180,20 @@ jobs:
           --set image.tag=${GITHUB_SHA::7} \
           --set ingress.registerDns=${{ steps.ns.outputs.register_dns }} \
           --values infra/helm/values.yaml
+
+      # Wait for K8s service to be ready
+      - name: Wait for service readiness
+        run: |
+          kubectl wait --for=condition=available deployment/event-driven-api \
+          --namespace=${{ steps.ns.outputs.namespace }} --timeout=300s
+
+      # Deployment of eventarc (after K8s service is ready)
+      - name: Terraform apply eventarc
+        run: |
+          terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
+          -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
+          -target=module.eventarc \
+          -lock=false
 
 
   quality:
