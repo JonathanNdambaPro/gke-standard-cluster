@@ -51,7 +51,7 @@ module "eventarc" {
   source                = "./modules/eventarc"
   project               = var.project
   region                = var.region
-  service_account_email = module.service-account.service_account_name_email
+  service_account_email = module.service-account.service_account_eventarc_name_email
   label                 = var.label
   source_topic_name     = module.pubsub.pubsub_topic_name
   eventarc_name         = var.eventarc_name
@@ -69,7 +69,7 @@ module "gke-cluster" {
   gke_cluster_name = var.gke_cluster_name
   vpc              = module.network.vpc
   subnet           = module.network.subnet
-  email            = module.service-account.service_account_name_email
+  email            = module.service-account.service_account_gke_email
 }
 
 module "artifactory" {
