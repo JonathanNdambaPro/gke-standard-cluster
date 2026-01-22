@@ -190,6 +190,13 @@ jobs:
           kubectl wait --for=condition=available deployment/event-driven-api \
           --namespace=${{ steps.ns.outputs.namespace }} --timeout=300s
 
+      # Initialize Eventarc GKE destination
+      - name: Initialize Eventarc GKE destinations
+        run: |
+          gcloud eventarc gke-destinations init \
+            --project=${{ env.GCP_PROJECT_ID }} \
+            --location=${{ env.GCP_ZONE }}
+
       # Deployment of eventarc (after K8s service is ready)
       - name: Terraform apply eventarc
         run: |
