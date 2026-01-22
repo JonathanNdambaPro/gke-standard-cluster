@@ -78,6 +78,12 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
     --role="roles/container.clusterAdmin"
 
+# GKE Developer (pour déployer dans le cluster via kubectl/helm)
+echo "Kubernetes Engine Developer"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/container.developer"
+
 # Cloud DNS via modules/cloud-dns
 echo "Cloud DNS Admin"
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
