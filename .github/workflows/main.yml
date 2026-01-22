@@ -21,7 +21,7 @@ env:
   GCP_ZONE: europe-west1
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
   IMAGE_NAME: event-driven
-  REPO_ARTIFACTORY: event-driven-gcp
+  REPO_ARTIFACTORY: docker-repository
   TARGET_RESSOURCE_TERRAFORM_ARTIFACT_REGISTRY: module.artifactory
   GKE_CLUSTER_NAME: template-gke-cluster
 
