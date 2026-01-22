@@ -51,7 +51,6 @@ def publish_with_retry(message_data: dict) -> str | None:
         logger.info(f"Message ID: {message_id}")
         logger.info(f"Data: {message_data}")
 
-
     except GoogleAPICallError as e:
         logger.error(f"❌ All retries failed: {e}")
         send_to_dlq(message_data, str(e))
