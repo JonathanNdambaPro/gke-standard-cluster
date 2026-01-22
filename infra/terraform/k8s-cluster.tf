@@ -42,24 +42,27 @@ module "cloud-domains" {
   contact_address_line = var.contact_address_line
 }
 
+# Create Pub/Sub topics for each pipeline
 module "pubsub" {
+  for_each   = var.event_pipelines
   source     = "./modules/pubsub"
-  topic_name = var.topic_name
+  topic_name = each.value.topic_name
 }
 
+# Create Eventarc triggers for each pipeline
 module "eventarc" {
+  for_each              = var.event_pipelines
   source                = "./modules/eventarc"
   project               = var.project
   region                = var.region
   service_account_email = module.service-account.service_account_eventarc_name_email
-  label                 = var.label
-  source_topic_name     = module.pubsub.pubsub_topic_name
-  eventarc_name         = var.eventarc_name
+  label                 = each.value.label
+  source_topic_name     = module.pubsub[each.key].pubsub_topic_name
+  eventarc_name         = "trigger-${each.key}"
   cluster               = module.gke-cluster.gke_cluster_name
   service               = var.eventarc_service_name
   namespace             = var.eventarc_trigger_namespace
-  gke_run_service_path  = var.gke_run_service_path
-  event_type            = var.event_type
+  gke_run_service_path  = each.value.path
 
   depends_on = [module.service-account, module.pubsub]
 }

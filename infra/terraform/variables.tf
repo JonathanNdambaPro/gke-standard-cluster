@@ -76,35 +76,16 @@ variable "gke_service_account_name" {
   description = "value"
 }
 
-variable "topic_name" {
-  type        = string
-  description = "Pub/Sub topic name."
-}
-
-# Cloud Domains Contact Info
-variable "contact_name" { type = string }
-variable "contact_email" { type = string }
-variable "contact_phone" { type = string }
-variable "contact_country_code" { type = string }
-variable "contact_postal_code" { type = string }
-variable "contact_state" { type = string }
-variable "contact_city" { type = string }
-variable "contact_address_line" { type = string }
-
-variable "eventarc_name" {
-  type        = string
-  description = "Name of the Eventarc trigger"
-}
-
-variable "label" {
-  type        = string
-  description = "Label for the Eventarc trigger"
-}
-
-variable "gke_run_service_path" {
-  type        = string
-  description = "Path for the GKE service receiving events"
-  default     = "/"
+# Event pipelines configuration (Pub/Sub + Eventarc)
+# Each pipeline creates a topic, DLQ, and Eventarc trigger
+variable "event_pipelines" {
+  type = map(object({
+    topic_name = string
+    path       = string
+    label      = string
+  }))
+  description = "Map of event pipelines. Key is used as trigger name suffix."
+  default     = {}
 }
 
 variable "eventarc_service_name" {
@@ -118,6 +99,16 @@ variable "eventarc_trigger_namespace" {
   default     = "default"
 }
 
+# Cloud Domains Contact Info
+variable "contact_name" { type = string }
+variable "contact_email" { type = string }
+variable "contact_phone" { type = string }
+variable "contact_country_code" { type = string }
+variable "contact_postal_code" { type = string }
+variable "contact_state" { type = string }
+variable "contact_city" { type = string }
+variable "contact_address_line" { type = string }
+
 variable "artifactory_repository_id" {
   type        = string
   description = "Nom du dépôt Artifact Registry où stocker les images Docker."
@@ -129,8 +120,3 @@ variable "yearly_price_units" {
   default     = "12"
 }
 
-variable "event_type" {
-  type        = string
-  default     = "google.cloud.pubsub.topic.v1.messagePublished"
-  description = "The event type to trigger on (default: Pub/Sub message published)"
-}

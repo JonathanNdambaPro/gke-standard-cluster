@@ -34,15 +34,23 @@ contact_country_code = "FR"
 
 create_domain_registration = false
 
-# Pub/Sub Configuration
-topic_name = "event-ingestion"
+# Event Pipelines (Pub/Sub + Eventarc)
+# Add new pipelines here - each creates a topic, DLQ, and Eventarc trigger
+event_pipelines = {
+  ingest = {
+    topic_name = "event-ingestion"
+    path       = "/api/v1/ingest_event"
+    label      = "event-driven-ingest"
+  }
+  # Example: add more pipelines as needed
+  # analytics = {
+  #   topic_name = "event-analytics"
+  #   path       = "/api/v1/analytics"
+  #   label      = "event-driven-analytics"
+  # }
+}
 
-# Eventarc Configuration
-eventarc_name = "event-trigger"
-label         = "event-driven"
-
-# GKE Service Path
-gke_run_service_path       = "/api/v1/ingest_event"
+# GKE Service Configuration
 eventarc_service_name      = "event-driven-api"
 eventarc_trigger_namespace = "default"
 

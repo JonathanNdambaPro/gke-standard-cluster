@@ -34,15 +34,16 @@ contact_country_code = "FR"
 
 create_domain_registration = false
 
-# Pub/Sub Configuration
-topic_name = "event-ingestion-local"
+# Event Pipelines (Pub/Sub + Eventarc)
+event_pipelines = {
+  ingest = {
+    topic_name = "event-ingestion-local"
+    path       = "/api/v1/ingest_event"
+    label      = "event-driven-ingest-local"
+  }
+}
 
-# Eventarc Configuration
-eventarc_name = "event-trigger-local"
-label         = "event-driven-local"
-
-# Cloud Run / GKE Service Path
-gke_run_service_path       = "/api/v1/ingest_event"
+# GKE Service Configuration
 eventarc_service_name      = "event-driven-api-local"
 eventarc_trigger_namespace = "local"
 

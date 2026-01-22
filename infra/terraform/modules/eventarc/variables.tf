@@ -14,12 +14,6 @@ variable "service_account_email" {
   description = "The service account to use to execute the Eventarc triggers"
 }
 
-variable "event_type" {
-  type        = string
-  default     = "google.cloud.pubsub.topic.v1.messagePublished"
-  description = "The event type to trigger on (default: Pub/Sub message published)"
-}
-
 variable "eventarc_name" {
   type        = string
   description = "The service account to use to execute the Eventarc triggers"

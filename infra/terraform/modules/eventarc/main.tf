@@ -5,7 +5,7 @@ resource "google_eventarc_trigger" "gke_trigger" {
   service_account = var.service_account_email
   matching_criteria {
     attribute = "type"
-    value     = var.event_type
+    value     = "google.cloud.pubsub.topic.v1.messagePublished"
   }
   destination {
     gke {
