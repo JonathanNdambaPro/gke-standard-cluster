@@ -73,9 +73,17 @@ data "google_service_account" "gke_sa" {
 }
 
 # Workload Identity binding for Ephemeral Environments
+data "google_service_account" "eventarc_triggers" {
+  count      = local.is_prod ? 0 : 1
+  account_id = "eventarc-triggers-gke"
+  project    = var.project
+}
+
+# Workload Identity binding for Ephemeral Environments
+# Connects the K8s SA to the Eventarc Trigger SA (not the GKE Node SA)
 resource "google_service_account_iam_member" "workload_identity_binding_ephemeral" {
   count              = local.is_prod ? 0 : 1
-  service_account_id = data.google_service_account.gke_sa[0].name
+  service_account_id = data.google_service_account.eventarc_triggers[0].name
   role               = "roles/iam.workloadIdentityUser"
   member             = "serviceAccount:${var.project}.svc.id.goog[${var.eventarc_trigger_namespace}/event-driven-api-sa]"
 }
@@ -141,7 +149,7 @@ module "eventarc" {
 
   project               = var.project
   region                = var.region
-  service_account_email = local.is_prod ? module.service-account[0].service_account_eventarc_name_email : data.google_service_account.gke_sa[0].email
+  service_account_email = local.is_prod ? module.service-account[0].service_account_eventarc_name_email : data.google_service_account.eventarc_triggers[0].email
 
   label              = each.value.label
   source_topic_name  = module.pubsub[each.key].pubsub_topic_id

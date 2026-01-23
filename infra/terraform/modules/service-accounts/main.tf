@@ -84,7 +84,6 @@ data "google_project" "current" {
 
 locals {
   eventarc_service_agent = "service-${data.google_project.current.number}@gcp-sa-eventarc.iam.gserviceaccount.com"
-  is_prod                = terraform.workspace == "default"
 }
 
 resource "google_project_iam_member" "eventarc_agent_compute_viewer" {
