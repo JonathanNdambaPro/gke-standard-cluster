@@ -1,3 +1,7 @@
+module "google-api" {
+  source = "./modules/google-api"
+}
+
 module "network" {
   source                    = "./modules/network"
   subnet_ip_cidr_range      = var.subnet_ip_cidr_range

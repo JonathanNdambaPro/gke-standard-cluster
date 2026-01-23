@@ -96,6 +96,14 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
     --role="roles/domains.admin"
 
+
+# Service Usage Admin (pour activer les APIs via modules/google-api)
+echo "Service Usage Admin"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/serviceusage.serviceUsageAdmin"
+
+
 # --- FIN DES AJOUTS ---
 
 echo "Génération de la clé JSON pour ${SERVICE_ACCOUNT_NAME}…"
