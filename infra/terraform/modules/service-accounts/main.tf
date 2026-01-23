@@ -37,7 +37,7 @@ resource "google_service_account_iam_member" "workload_identity_binding" {
 # Workload Identity binding for Ephemeral Environments
 resource "google_service_account_iam_member" "workload_identity_binding_ephemeral" {
   count              = local.is_prod ? 0 : 1
-  service_account_id = data.google_service_account.gke_sa[0].name
+  service_account_id = google_service_account.gke_sa.name
   role               = "roles/iam.workloadIdentityUser"
   member             = "serviceAccount:${var.project}.svc.id.goog[${var.eventarc_trigger_namespace}/event-driven-api-sa]"
 }
