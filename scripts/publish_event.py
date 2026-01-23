@@ -13,6 +13,7 @@ from google.api_core import retry as api_retry
 from google.api_core.exceptions import GoogleAPICallError
 from google.cloud import pubsub_v1
 from loguru import logger
+from pydantic import BaseModel, Field
 
 # Configuration - matches config.yaml
 PROJECT_ID = "dataascode"
@@ -24,9 +25,6 @@ INITIAL_DELAY = 1.0  # seconds
 MAX_DELAY = 60.0  # seconds
 MULTIPLIER = 2.0
 
-# Message matching EventModelV1 (name, lastname)
-MESSAGE = {"name": "John", "lastname": "Doe"}
-
 # Configure retry with exponential backoff
 RETRY_CONFIG = api_retry.Retry(
     initial=INITIAL_DELAY,
@@ -36,14 +34,33 @@ RETRY_CONFIG = api_retry.Retry(
 )
 
 
-def publish_with_retry(message_data: dict) -> str | None:
+class PublishConfig(BaseModel):
+    environment: str = Field("production", pattern=r"^(production|feat.*|fix.*)$")
+
+class SchemaMessage(BaseModel):
+    name: str = "John"
+    lastname: str = "Doe"
+
+# Validated configuration
+CONFIG = PublishConfig()
+
+# Message matching EventModelV1 (name, lastname)
+MESSAGE = SchemaMessage(name="John", lastname="Doe")
+
+
+def publish_with_retry(message_data: SchemaMessage = MESSAGE, config: PublishConfig = CONFIG) -> None:
     """Publish a message to Pub/Sub with exponential backoff retry."""
     publisher = pubsub_v1.PublisherClient()
     topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
-    data = json.dumps(message_data).encode("utf-8")
+    data = message_data.model_dump_json().encode("utf-8")
 
     try:
-        future = publisher.publish(topic_path, data, retry=RETRY_CONFIG)
+        future = publisher.publish(
+            topic_path,
+            data,
+            environment=config.environment,  # Attribute for Eventarc filtering
+            retry=RETRY_CONFIG
+        )
         message_id = future.result(timeout=30)
 
         logger.info("✅ Message published")

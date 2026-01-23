@@ -7,6 +7,10 @@ resource "google_eventarc_trigger" "gke_trigger" {
     attribute = "type"
     value     = "google.cloud.pubsub.topic.v1.messagePublished"
   }
+  matching_criteria {
+    attribute = "environment"
+    value     = var.environment_filter
+  }
   destination {
     gke {
       cluster   = var.cluster

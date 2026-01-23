@@ -119,3 +119,9 @@ variable "yearly_price_units" {
   description = "Maximum price in USD you are willing to pay for the domain"
   default     = "12"
 }
+
+variable "eventarc_environment_filter" {
+  description = "The environment filter for Eventarc triggers (e.g., production)"
+  type        = string
+  default     = "production"
+}

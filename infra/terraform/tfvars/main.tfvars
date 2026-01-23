@@ -53,6 +53,7 @@ event_pipelines = {
 # GKE Service Configuration
 eventarc_service_name      = "event-driven-api"
 eventarc_trigger_namespace = "default"
+eventarc_environment_filter = "production"
 
 # Artifactory
 artifactory_repository_id = "docker-repository"

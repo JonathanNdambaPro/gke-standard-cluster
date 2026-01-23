@@ -196,13 +196,36 @@ jobs:
           kubectl wait --for=condition=available deployment/event-driven-api \
           --namespace=${{ steps.ns.outputs.namespace }} --timeout=300s
 
-      # Deployment of eventarc (after K8s service is ready)
-      - name: Terraform apply eventarc
+      # Deployment of eventarc (only for main branch - production)
+      - name: Terraform apply eventarc (Production)
+        if: github.ref == 'refs/heads/main'
         run: |
           terraform -chdir=infra/terraform apply -var-file="tfvars/main.tfvars" --auto-approve \
           -var "eventarc_trigger_namespace=${{ steps.ns.outputs.namespace }}" \
           -target=module.eventarc \
           -lock=false
+
+      # Create Ephemeral Eventarc Trigger for Feature Branches
+      - name: Create Ephemeral Eventarc Trigger
+        if: github.ref != 'refs/heads/main'
+        run: |
+          NAMESPACE="${{ steps.ns.outputs.namespace }}"
+          TRIGGER_NAME="trigger-ingest-${NAMESPACE}"
+          # Format filter matching the publish_event.py pattern
+          FILTER_ENV="feat-${NAMESPACE#feat-}"
+          
+          echo "Creating/Updating Ephemeral Trigger: $TRIGGER_NAME for env: $FILTER_ENV"
+          
+          gcloud eventarc triggers create $TRIGGER_NAME \
+          --location=${{ env.GCP_ZONE }} \
+          --destination-gke-cluster=${{ env.GKE_CLUSTER_NAME }} \
+          --destination-gke-namespace=$NAMESPACE \
+          --destination-gke-service=event-driven-api \
+          --destination-gke-path=/api/v1/ingest_event \
+          --event-filters="type=google.cloud.pubsub.topic.v1.messagePublished" \
+          --event-filters="environment=$FILTER_ENV" \
+          --transport-topic=projects/${{ env.GCP_PROJECT_ID }}/topics/event-ingestion \
+          --service-account=eventarc-triggers-gke@${{ env.GCP_PROJECT_ID }}.iam.gserviceaccount.com
 
 
   quality:

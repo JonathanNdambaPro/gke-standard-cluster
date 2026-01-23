@@ -63,6 +63,7 @@ module "eventarc" {
   service               = var.eventarc_service_name
   namespace             = var.eventarc_trigger_namespace
   gke_run_service_path  = each.value.path
+  environment_filter    = var.eventarc_environment_filter
 
   depends_on = [module.service-account, module.pubsub]
 }

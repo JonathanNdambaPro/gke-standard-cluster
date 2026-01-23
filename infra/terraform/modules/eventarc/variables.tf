@@ -1,51 +1,55 @@
 variable "project" {
+  description = "The project ID"
   type        = string
-  description = "The GCP project ID where resources will be created"
 }
 
 variable "region" {
+  description = "The region"
   type        = string
-  default     = "europe-west9"
-  description = "Region where GCP services will be deployed"
 }
 
 variable "service_account_email" {
+  description = "The service account email"
   type        = string
-  description = "The service account to use to execute the Eventarc triggers"
-}
-
-variable "eventarc_name" {
-  type        = string
-  description = "The service account to use to execute the Eventarc triggers"
-}
-
-variable "cluster" {
-  type        = string
-  description = "Name of the cluster gke"
 }
 
 variable "label" {
+  description = "Label for the trigger"
   type        = string
-  description = "Label for the Eventarc trigger"
 }
 
 variable "source_topic_name" {
+  description = "The source Pub/Sub topic name"
   type        = string
-  description = "The service account to use to execute the Eventarc triggers"
 }
-variable "namespace" {
+
+variable "eventarc_name" {
+  description = "The name of the eventarc trigger"
   type        = string
-  default     = "default"
-  description = "Namespace where the service is deployed"
+}
+
+variable "cluster" {
+  description = "The GKE cluster name"
+  type        = string
 }
 
 variable "service" {
+  description = "The GKE service name"
   type        = string
-  description = "Name of the GKE service to receive events"
+}
+
+variable "namespace" {
+  description = "The GKE namespace"
+  type        = string
 }
 
 variable "gke_run_service_path" {
+  description = "The path for the GKE service"
   type        = string
-  default     = "/"
-  description = "Path within the service to send events to"
+}
+
+variable "environment_filter" {
+  description = "The environment to filter events for (e.g. production, feature-x)"
+  type        = string
+  default     = "production"
 }

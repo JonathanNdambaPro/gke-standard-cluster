@@ -1,4 +1,4 @@
-name: Cleanup Environment
+name: Cleanup Ephemeral Environment
 on:
   pull_request:
     types: [closed]
@@ -8,16 +8,22 @@ on:
        - "api/**"
        - "infra/helm/**"
 
+env:
+  CONFIG_FILE: config.yaml
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
 jobs:
   cleanup:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    env:
-      GKE_CLUSTER_NAME: template-gke-cluster
-      GCP_ZONE: europe-west1
-      GCP_PROJECT_ID: dataascode
     steps:
       - uses: actions/checkout@v4
+
+      - name: Load config from config.yaml
+        id: config
+        run: |
+          echo "GCP_PROJECT_ID=$(yq '.gcp.project_id' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
+          echo "GCP_ZONE=$(yq '.gcp.region' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
+          echo "GKE_CLUSTER_NAME=$(yq '.gke.cluster_name' ${{ env.CONFIG_FILE }})" >> $GITHUB_ENV
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v1
@@ -28,16 +34,33 @@ jobs:
         run: |
             gcloud container clusters get-credentials ${{ env.GKE_CLUSTER_NAME }} --zone ${{ env.GCP_ZONE }} --project ${{ env.GCP_PROJECT_ID }}
 
-      - name: Delete Environment
+      - name: Calculate Namespace
+        id: ns
         run: |
           REF_NAME="${{ github.event.pull_request.head.ref }}"
-          # Sanitize branch name to match namespace creation logic
           SANITIZED_NAME=$(echo "$REF_NAME" | tr '[:upper:]' '[:lower:]' | tr '/' '-' | sed 's/[^a-z0-9-]//g')
+          echo "namespace=$SANITIZED_NAME" >> $GITHUB_OUTPUT
 
-          echo "Cleaning up namespace: $SANITIZED_NAME"
+      - name: Delete Ephemeral Eventarc Trigger
+        run: |
+          NAMESPACE="${{ steps.ns.outputs.namespace }}"
+          TRIGGER_NAME="trigger-ingest-${NAMESPACE}"
+          
+          echo "Deleting Ephemeral Trigger: $TRIGGER_NAME"
+          
+          # Delete trigger if exists, ignore error if not found
+          gcloud eventarc triggers delete $TRIGGER_NAME \
+            --location=${{ env.GCP_ZONE }} \
+            --quiet || echo "Trigger $TRIGGER_NAME not found or already deleted"
+
+      - name: Delete Environment
+        run: |
+          NAMESPACE="${{ steps.ns.outputs.namespace }}"
+          
+          echo "Cleaning up namespace: $NAMESPACE"
 
           # Uninstall Helm release
-          helm uninstall event-driven-api --namespace $SANITIZED_NAME || true
+          helm uninstall event-driven-api --namespace $NAMESPACE || true
 
           # Delete Namespace
-          kubectl delete namespace $SANITIZED_NAME --ignore-not-found=true
+          kubectl delete namespace $NAMESPACE --ignore-not-found=true
