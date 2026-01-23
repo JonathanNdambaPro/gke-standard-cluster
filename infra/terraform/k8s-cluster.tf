@@ -63,20 +63,13 @@ module "service-account" {
   source                   = "./modules/service-accounts"
   gke_service_account_name = var.gke_service_account_name
   project                  = var.project
+  eventarc_trigger_namespace = var.eventarc_trigger_namespace
 }
 
 data "google_service_account" "gke_sa" {
   count      = local.is_prod ? 0 : 1
   account_id = var.gke_service_account_name
   project    = var.project
-}
-
-# Workload Identity binding for Ephemeral Environments
-resource "google_service_account_iam_member" "workload_identity_binding_ephemeral" {
-  count              = local.is_prod ? 0 : 1
-  service_account_id = data.google_service_account.gke_sa[0].name
-  role               = "roles/iam.workloadIdentityUser"
-  member             = "serviceAccount:${var.project}.svc.id.goog[${var.eventarc_trigger_namespace}/event-driven-api-sa]"
 }
 
 module "gke-cluster" {
