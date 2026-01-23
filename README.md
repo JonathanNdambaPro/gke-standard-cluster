@@ -24,13 +24,40 @@ An event-driven architecture implementation on Google Cloud Platform that ingest
 - 🐳 **Multi-Tag Docker**: Automatic image tagging with SHA, timestamp, and latest
 - 🎯 **Event-Driven Architecture**: Native Cloud Run service integration with Eventarc
 - 🛡️ **Secure Storage**: GCS access with least-privilege IAM policies
+- ⚡ **Ephemeral Environments**: Automatic per-PR environment creation on Shared Cluster
+- 🧩 **Shared Infrastructure**: Efficient resource usage with consolidated GKE/VPC
 
 ## Architecture
 
-```
-Pub/Sub Topic → Eventarc → Cloud Run (FastAPI) → Delta Lake (GCS)
-                                  ↓
-                              Logfire (Observability)
+```mermaid
+graph TD
+    subgraph GCP[Google Cloud Platform]
+        subgraph SharedInfra[Shared Infrastructure (Prod)]
+            VPC[VPC Network]
+            DNS[Cloud DNS]
+            GKE[GKE Cluster Autopilot]
+        end
+
+        subgraph EventFlow[Event Driven Architecture]
+            PubSub[Pub/Sub Topic] -->|Push| Eventarc[Eventarc Trigger]
+        end
+
+        Eventarc -->|Trigger| Service[K8s Service (Cloud Run)]
+
+        subgraph App[Application Layer]
+            Service --> Pods[FastAPI Pods]
+            Pods -->|Write| Delta[Delta Lake (GCS)]
+            Pods -->|Log| Logfire[Logfire Observability]
+        end
+    end
+
+    classDef shared fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef event fill:#fff3e0,stroke:#ff6f00,stroke-width:2px;
+    classDef app fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+
+    class VPC,DNS,GKE shared;
+    class PubSub,Eventarc event;
+    class Service,Pods,Delta,Logfire app;
 ```
 
 The system follows an event-driven pattern where:
@@ -140,11 +167,16 @@ This project now includes a production-ready GKE Standard cluster setup via Terr
 2.  **Configure Variables**
     Edit `infra/terraform/tfvars/local.tfvars` with your project ID and **Contact Info** (Required for Cloud Domains).
 
-3.  **Plan & Apply**
+3.  **Plan & Apply (Production)**
     ```bash
+    # Select Production Workspace
+    terraform workspace select default
+
     make plan_local_terraform
     make apply_local_terraform
     ```
+
+    *For Ephemeral Environments, the CI/CD pipeline handles workspace selection automatically based on the branch name.*
 
 4.  **Deploy Kubernetes Manifests**
     ```bash

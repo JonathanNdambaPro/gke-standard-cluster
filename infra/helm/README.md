@@ -24,8 +24,10 @@ Helm chart for deploying the Event-Driven API on Google Kubernetes Engine (GKE).
 ## Installation
 
 ```bash
+# Example for a feature branch
 helm upgrade --install event-driven-api ./infra/helm \
-  --namespace default \
+  --namespace feat-my-feature \
+  --create-namespace \
   --set image.repository=<REGISTRY>/<IMAGE> \
   --set image.tag=<TAG> \
   --values infra/helm/values.yaml

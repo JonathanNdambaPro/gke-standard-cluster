@@ -41,17 +41,33 @@ jobs:
           SANITIZED_NAME=$(echo "$REF_NAME" | tr '[:upper:]' '[:lower:]' | tr '/' '-' | sed 's/[^a-z0-9-]//g')
           echo "namespace=$SANITIZED_NAME" >> $GITHUB_OUTPUT
 
-      - name: Delete Ephemeral Eventarc Trigger
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.12.1
+
+      - name: Terraform Destroy Ephemeral Architecture
         run: |
+          # Same logic to calculate filter env for variables
           NAMESPACE="${{ steps.ns.outputs.namespace }}"
-          TRIGGER_NAME="trigger-ingest-${NAMESPACE}"
+          FILTER_ENV="feat-${NAMESPACE#feat-}"
 
-          echo "Deleting Ephemeral Trigger: $TRIGGER_NAME"
+          # Init
+          terraform -chdir=infra/terraform init -upgrade -backend-config="backend/main.gcs.backend"
 
-          # Delete trigger if exists, ignore error if not found
-          gcloud eventarc triggers delete $TRIGGER_NAME \
-            --location=${{ env.GCP_ZONE }} \
-            --quiet || echo "Trigger $TRIGGER_NAME not found or already deleted"
+          # Select Workspace
+          terraform -chdir=infra/terraform workspace select $NAMESPACE || echo "Workspace $NAMESPACE not found"
+
+          # Destroy Resources
+          # We need to pass variables so validation passes, even if destroying
+          terraform -chdir=infra/terraform destroy -var-file="tfvars/main.tfvars" --auto-approve \
+          -var "eventarc_trigger_namespace=$NAMESPACE" \
+          -var "eventarc_environment_filter=$FILTER_ENV" \
+          -lock=false
+
+          # Delete Workspace
+          terraform -chdir=infra/terraform workspace select default
+          terraform -chdir=infra/terraform workspace delete $NAMESPACE
 
       - name: Delete Environment
         run: |

@@ -5,6 +5,12 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 # Change the working directory to the `app` directory
 WORKDIR /app
 
+# Install build dependencies
+# hadolint ignore=DL3008
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the lockfile and `pyproject.toml` into the image
 COPY uv.lock /app/uv.lock
 COPY pyproject.toml /app/pyproject.toml

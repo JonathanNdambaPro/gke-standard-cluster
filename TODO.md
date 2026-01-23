@@ -8,4 +8,4 @@
 - [x] **Observability (Loguru & Logfire)**: Implement structured logging and monitoring.
 
 ## Future Versions
-- [ ] **GKE Autopilot**: Create a dedicated Terraform variant for GKE Autopilot.
+- [x] **GKE Autopilot**: Create a dedicated Terraform variant for GKE Autopilot.

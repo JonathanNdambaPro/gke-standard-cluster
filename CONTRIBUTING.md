@@ -165,7 +165,14 @@ Before you submit a pull request, check that it meets these guidelines:
 
 1. The pull request should include tests.
 2. If the pull request adds functionality, the docs should be updated.
-Put your new functionality into a function with a docstring, and add the feature to the list in `README.md`.
-3. Ensure your commit messages follow the Conventional Commits specification described above.
+3. Ensure your commit messages follow the Conventional Commits specification.
+
+### ⚡ Ephemeral Environments
+
+Every Pull Request automatically provisions a full **Ephemeral Environment**:
+1.  **Infrastructure**: A `terraform workspace` is created (e.g., `feat-new-api`).
+2.  **Deployment**: The app is deployed to a dedicated Kubernetes Namespace.
+3.  **Isolation**: Dedicated Pub/Sub topics and Eventarc triggers are created (e.g., `trigger-ingest-feat-new-api`).
+4.  **Cleanup**: When the PR is merged or closed, the environment is automatically destroyed.
 
 ```

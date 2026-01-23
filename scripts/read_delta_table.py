@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import duckdb
-import sqlglot
 from dotenv import load_dotenv
 from jinja2 import Template
 from loguru import logger
@@ -25,7 +24,7 @@ logger.info(settings.HMAC_PASSWORD)
 
 
 con = duckdb.connect()
-path_gcs_deltalake = ...
+path_gcs_deltalake = "gs://event-driven/ingest_table/"
 
 with open(FILE_SQL) as f:
     template = Template(f.read())
@@ -38,5 +37,8 @@ query = template.render(
 )
 
 
-sqlglot.transpile(query, read="duckdb")
 logger.info("SQL syntax is valid for DuckDB.")
+
+data = con.query(query=query).df()
+
+print(data)

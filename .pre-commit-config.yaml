@@ -6,7 +6,7 @@ repos:
       - id: check-merge-conflict
       - id: check-toml
       - id: check-yaml
-        exclude: ^infra/helm/templates/
+        exclude: (^infra/helm/templates/|^mkdocs.yml$)
       - id: check-json
         exclude: ^.devcontainer/devcontainer.json
       - id: pretty-format-json
