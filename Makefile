@@ -85,13 +85,13 @@ helm_manifest:
 .PHONY: check_domain
 check_domain:
 	@gcloud domains registrations describe templatejojotest.com
-	@gcloud domains registrations describe templatejojotest.com --format="yaml(dnsSettings.customDns.nameServers)"
+	@gcloud domains registrations describe templatejojotest.com --format="yaml(dnsSettings.customDns.nameServers)" # To modify
+	@gcloud dns managed-zones describe template-dns --project=dataascode --format="value(nameServers)" # Real one
 
 .PHONY: fix_nameservers_developer
 fix_nameservers_developer:
 	@gcloud domains registrations configure dns templatejojotest.com \
-		--name-servers="ns-cloud-c1.googledomains.com,ns-cloud-c2.googledomains.com,ns-cloud-c3.googledomains.com,ns-cloud-c4.googledomains.com"
-
+		--name-servers="ns-cloud-d1.googledomains.com,ns-cloud-d2.googledomains.com,ns-cloud-d3.googledomains.com,ns-cloud-d4.googledomains.com"
 .PHONY: help
 help:
 	@uv run python -c "import re; \
