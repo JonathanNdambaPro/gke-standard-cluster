@@ -179,6 +179,7 @@ jobs:
           -target=module.pubsub \
           -target=module.monitoring \
           -target=module.cloud-domains \
+          -target=google_service_account_iam_member.workload_identity_binding_ephemeral \
           -lock=false
 
       - name: Get GKE Credentials
