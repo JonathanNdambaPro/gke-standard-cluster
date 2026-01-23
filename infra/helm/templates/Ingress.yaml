@@ -11,10 +11,12 @@ metadata:
   annotations:
     # External Load Balancer
     kubernetes.io/ingress.class: {{ .Values.ingress.className | quote }}
+    {{- if .Values.ingress.registerDns }}
     # Static IP for Ingress Service
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.annotations.global_static_ip_name | default "template-external-ip" }}
     # Google Managed SSL Certificates
     networking.gke.io/managed-certificates: {{ .Values.ingress.annotations.managed_certificates | default "managed-cert-for-ingress" }}
+    {{- end }}
     # SSL Redirect HTTP to HTTPS
     networking.gke.io/v1beta1.FrontendConfig: {{ .Values.ingress.annotations.frontend_config | default "my-frontend-config" }}
     # External DNS - For creating a Record Set in Google Cloud Cloud DNS
