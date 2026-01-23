@@ -36,6 +36,7 @@ resource "google_service_account_iam_member" "workload_identity_binding" {
 
 
 
+
 resource "google_service_account" "eventarc_triggers" {
   account_id   = "eventarc-triggers-gke"
   display_name = "Eventarc Triggers Service Account"
