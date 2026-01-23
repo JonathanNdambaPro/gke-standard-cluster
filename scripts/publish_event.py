@@ -37,9 +37,11 @@ RETRY_CONFIG = api_retry.Retry(
 class PublishConfig(BaseModel):
     environment: str = Field("production", pattern=r"^(production|feat.*|fix.*)$")
 
+
 class SchemaMessage(BaseModel):
     name: str = "John"
     lastname: str = "Doe"
+
 
 # Validated configuration
 CONFIG = PublishConfig()
@@ -59,7 +61,7 @@ def publish_with_retry(message_data: SchemaMessage = MESSAGE, config: PublishCon
             topic_path,
             data,
             environment=config.environment,  # Attribute for Eventarc filtering
-            retry=RETRY_CONFIG
+            retry=RETRY_CONFIG,
         )
         message_id = future.result(timeout=30)
 

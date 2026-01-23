@@ -45,9 +45,9 @@ jobs:
         run: |
           NAMESPACE="${{ steps.ns.outputs.namespace }}"
           TRIGGER_NAME="trigger-ingest-${NAMESPACE}"
-          
+
           echo "Deleting Ephemeral Trigger: $TRIGGER_NAME"
-          
+
           # Delete trigger if exists, ignore error if not found
           gcloud eventarc triggers delete $TRIGGER_NAME \
             --location=${{ env.GCP_ZONE }} \
@@ -56,7 +56,7 @@ jobs:
       - name: Delete Environment
         run: |
           NAMESPACE="${{ steps.ns.outputs.namespace }}"
-          
+
           echo "Cleaning up namespace: $NAMESPACE"
 
           # Uninstall Helm release

@@ -15,9 +15,9 @@ resource "google_monitoring_alert_policy" "dlq_policy" {
   conditions {
     display_name = "Messages in DLQ"
     condition_threshold {
-      filter     = "resource.type = \"pubsub_subscription\" AND resource.labels.subscription_id = one_of(${join(",", formatlist("\"%s\"", var.dlq_subscriptions))}) AND metric.type = \"pubsub.googleapis.com/subscription/num_undelivered_messages\""
-      duration   = "60s"
-      comparison = "COMPARISON_GT"
+      filter          = "resource.type = \"pubsub_subscription\" AND resource.labels.subscription_id = one_of(${join(",", formatlist("\"%s\"", var.dlq_subscriptions))}) AND metric.type = \"pubsub.googleapis.com/subscription/num_undelivered_messages\""
+      duration        = "60s"
+      comparison      = "COMPARISON_GT"
       threshold_value = 0
       aggregations {
         alignment_period   = "60s"

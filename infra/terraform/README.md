@@ -21,6 +21,8 @@ No providers.
 | <a name="module_cloud-domains"></a> [cloud-domains](#module\_cloud-domains) | ./modules/cloud-domains | n/a |
 | <a name="module_eventarc"></a> [eventarc](#module\_eventarc) | ./modules/eventarc | n/a |
 | <a name="module_gke-cluster"></a> [gke-cluster](#module\_gke-cluster) | ./modules/gke-cluster | n/a |
+| <a name="module_google-api"></a> [google-api](#module\_google-api) | ./modules/google-api | n/a |
+| <a name="module_monitoring"></a> [monitoring](#module\_monitoring) | ./modules/monitoring | n/a |
 | <a name="module_network"></a> [network](#module\_network) | ./modules/network | n/a |
 | <a name="module_pubsub"></a> [pubsub](#module\_pubsub) | ./modules/pubsub | n/a |
 | <a name="module_security"></a> [security](#module\_security) | ./modules/security | n/a |
@@ -46,6 +48,7 @@ No resources.
 | <a name="input_create_domain_registration"></a> [create\_domain\_registration](#input\_create\_domain\_registration) | Whether to create the Cloud Domain registration | `bool` | `true` | no |
 | <a name="input_dns_name"></a> [dns\_name](#input\_dns\_name) | value | `string` | n/a | yes |
 | <a name="input_event_pipelines"></a> [event\_pipelines](#input\_event\_pipelines) | Map of event pipelines. Key is used as trigger name suffix. | <pre>map(object({<br/>    topic_name = string<br/>    path       = string<br/>    label      = string<br/>  }))</pre> | `{}` | no |
+| <a name="input_eventarc_environment_filter"></a> [eventarc\_environment\_filter](#input\_eventarc\_environment\_filter) | The environment filter for Eventarc triggers (e.g., production) | `string` | `"production"` | no |
 | <a name="input_eventarc_service_name"></a> [eventarc\_service\_name](#input\_eventarc\_service\_name) | Name of the Kubernetes service receiving events | `string` | n/a | yes |
 | <a name="input_eventarc_trigger_namespace"></a> [eventarc\_trigger\_namespace](#input\_eventarc\_trigger\_namespace) | Namespace of the Kubernetes service | `string` | `"default"` | no |
 | <a name="input_gke_cluster_name"></a> [gke\_cluster\_name](#input\_gke\_cluster\_name) | value | `string` | n/a | yes |

@@ -25,16 +25,17 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_cluster"></a> [cluster](#input\_cluster) | Name of the cluster gke | `string` | n/a | yes |
-| <a name="input_eventarc_name"></a> [eventarc\_name](#input\_eventarc\_name) | The service account to use to execute the Eventarc triggers | `string` | n/a | yes |
-| <a name="input_gke_run_service_path"></a> [gke\_run\_service\_path](#input\_gke\_run\_service\_path) | Path within the service to send events to | `string` | `"/"` | no |
-| <a name="input_label"></a> [label](#input\_label) | Label for the Eventarc trigger | `string` | n/a | yes |
-| <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace where the service is deployed | `string` | `"default"` | no |
-| <a name="input_project"></a> [project](#input\_project) | The GCP project ID where resources will be created | `string` | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | Region where GCP services will be deployed | `string` | `"europe-west9"` | no |
-| <a name="input_service"></a> [service](#input\_service) | Name of the GKE service to receive events | `string` | n/a | yes |
-| <a name="input_service_account_email"></a> [service\_account\_email](#input\_service\_account\_email) | The service account to use to execute the Eventarc triggers | `string` | n/a | yes |
-| <a name="input_source_topic_name"></a> [source\_topic\_name](#input\_source\_topic\_name) | The service account to use to execute the Eventarc triggers | `string` | n/a | yes |
+| <a name="input_cluster"></a> [cluster](#input\_cluster) | The GKE cluster name | `string` | n/a | yes |
+| <a name="input_environment_filter"></a> [environment\_filter](#input\_environment\_filter) | The environment to filter events for (e.g. production, feature-x) | `string` | `"production"` | no |
+| <a name="input_eventarc_name"></a> [eventarc\_name](#input\_eventarc\_name) | The name of the eventarc trigger | `string` | n/a | yes |
+| <a name="input_gke_run_service_path"></a> [gke\_run\_service\_path](#input\_gke\_run\_service\_path) | The path for the GKE service | `string` | n/a | yes |
+| <a name="input_label"></a> [label](#input\_label) | Label for the trigger | `string` | n/a | yes |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | The GKE namespace | `string` | n/a | yes |
+| <a name="input_project"></a> [project](#input\_project) | The project ID | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | The region | `string` | n/a | yes |
+| <a name="input_service"></a> [service](#input\_service) | The GKE service name | `string` | n/a | yes |
+| <a name="input_service_account_email"></a> [service\_account\_email](#input\_service\_account\_email) | The service account email | `string` | n/a | yes |
+| <a name="input_source_topic_name"></a> [source\_topic\_name](#input\_source\_topic\_name) | The source Pub/Sub topic name | `string` | n/a | yes |
 
 ## Outputs
 

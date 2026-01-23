@@ -213,9 +213,9 @@ jobs:
           TRIGGER_NAME="trigger-ingest-${NAMESPACE}"
           # Format filter matching the publish_event.py pattern
           FILTER_ENV="feat-${NAMESPACE#feat-}"
-          
+
           echo "Creating/Updating Ephemeral Trigger: $TRIGGER_NAME for env: $FILTER_ENV"
-          
+
           gcloud eventarc triggers create $TRIGGER_NAME \
           --location=${{ env.GCP_ZONE }} \
           --destination-gke-cluster=${{ env.GKE_CLUSTER_NAME }} \

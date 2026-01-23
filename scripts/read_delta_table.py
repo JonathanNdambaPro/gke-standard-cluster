@@ -1,14 +1,18 @@
 from pathlib import Path
 
 import duckdb
+import sqlglot
 from dotenv import load_dotenv
-from pydantic_settings import BaseSettings
+from jinja2 import Template
 from loguru import logger
+from pydantic_settings import BaseSettings
 
 FILE_DOTENV = Path(__file__).parents[1] / ".scripts.env"
+FILE_SQL = Path(__file__).parent / "request" / "read_deltalake.sql"
 
 
 load_dotenv(dotenv_path=FILE_DOTENV)
+
 
 class Settings(BaseSettings):
     HMAC_KEY: str
@@ -19,17 +23,20 @@ settings = Settings()
 logger.info(settings.HMAC_KEY)
 logger.info(settings.HMAC_PASSWORD)
 
+
 con = duckdb.connect()
 path_gcs_deltalake = ...
-con.query(
-    f"""
-    CREATE SECRET (
-        TYPE gcs,
-        KEY_ID '{settings.HMAC_KEY}',
-        SECRET '{settings.HMAC_PASSWORD}'
-    );
 
-    SELECT *
-    FROM delta_scan('{ path_gcs_deltalake }')
-    """  # noqa: S608
+with open(FILE_SQL) as f:
+    template = Template(f.read())
+
+
+query = template.render(
+    hmac_key=settings.HMAC_KEY,
+    hmac_password=settings.HMAC_PASSWORD,
+    path_gcs_deltalake=path_gcs_deltalake,
 )
+
+
+sqlglot.transpile(query, read="duckdb")
+logger.info("SQL syntax is valid for DuckDB.")
