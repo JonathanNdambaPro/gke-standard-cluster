@@ -59,10 +59,10 @@ module "security" {
 # ==============================================================================
 
 module "service-account" {
-  count                    = local.is_prod ? 1 : 0
-  source                   = "./modules/service-accounts"
-  gke_service_account_name = var.gke_service_account_name
-  project                  = var.project
+  count                      = local.is_prod ? 1 : 0
+  source                     = "./modules/service-accounts"
+  gke_service_account_name   = var.gke_service_account_name
+  project                    = var.project
   eventarc_trigger_namespace = var.eventarc_trigger_namespace
 }
 
