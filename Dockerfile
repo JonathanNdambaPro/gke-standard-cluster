@@ -16,13 +16,13 @@ COPY uv.lock /app/uv.lock
 COPY pyproject.toml /app/pyproject.toml
 
 # Install dependencies
-RUN uv sync --frozen --no-install-project
+RUN uv sync --frozen --no-install-project --no-dev
 
 # Copy the project into the image
 COPY . /app
 
 # Sync the project
-RUN uv sync --frozen
+RUN uv sync --frozen --no-dev
 
 EXPOSE 8000
 

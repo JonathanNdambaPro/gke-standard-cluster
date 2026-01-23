@@ -104,6 +104,13 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --role="roles/serviceusage.serviceUsageAdmin"
 
 
+# Monitoring Admin (pour gérer les alert policies et notification channels)
+echo "Monitoring Editor"
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+    --role="roles/monitoring.editor"
+
+
 # --- FIN DES AJOUTS ---
 
 echo "Génération de la clé JSON pour ${SERVICE_ACCOUNT_NAME}…"
