@@ -80,3 +80,10 @@ module "artifactory" {
   region                    = var.region
   artifactory_repository_id = var.artifactory_repository_id
 }
+
+module "monitoring" {
+  source             = "./modules/monitoring"
+  project_id         = var.project
+  notification_email = var.contact_email
+  dlq_subscriptions  = [for p in module.pubsub : p.pubsub_dlq_subscription_name]
+}

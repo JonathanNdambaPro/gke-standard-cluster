@@ -82,6 +82,16 @@ delete_k8s:
 helm_manifest:
 	helm get manifest event-driven-api > trash.log
 
+.PHONY: check_domain
+check_domain:
+	@gcloud domains registrations describe templatejojotest.com
+	@gcloud domains registrations describe templatejojotest.com --format="yaml(dnsSettings.customDns.nameServers)"
+
+.PHONY: fix_nameservers_developer
+fix_nameservers_developer:
+	@gcloud domains registrations configure dns templatejojotest.com \
+		--name-servers="ns-cloud-c1.googledomains.com,ns-cloud-c2.googledomains.com,ns-cloud-c3.googledomains.com,ns-cloud-c4.googledomains.com"
+
 .PHONY: help
 help:
 	@uv run python -c "import re; \
