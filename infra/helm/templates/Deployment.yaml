@@ -29,6 +29,9 @@ spec: # Dictionary
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: TEMPORAL_ADDRESS
+              value: "{{ .Release.Name }}-temporal-frontend.{{ .Release.Namespace }}.svc.cluster.local:7233"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.readinessProbe }}

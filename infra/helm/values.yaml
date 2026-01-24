@@ -142,3 +142,17 @@ persistence:
   accessMode: ReadWriteOnce
   size: 50Gi
   storageClass: standard-rwo
+
+temporal:
+  server:
+    replicaCount: 1
+  admintools:
+    enabled: true
+  web:
+    enabled: true
+  elasticsearch:
+    enabled: false
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
