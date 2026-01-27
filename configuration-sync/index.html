@@ -769,21 +769,21 @@
 <h1 id="configuration-sync">Configuration Sync<a class="headerlink" href="#configuration-sync" title="Permanent link">&para;</a></h1>
 <h2 id="source-of-truth-configyaml">Source of Truth: <code>config.yaml</code><a class="headerlink" href="#source-of-truth-configyaml" title="Permanent link">&para;</a></h2>
 <p>The <code>config.yaml</code> file at the project root is the <strong>source of truth</strong> for shared values. The CI/CD workflow automatically parses it using <code>yq</code>.</p>
-<pre><code class="language-yaml"># Central project configuration
-gcp:
-  project_id: dataascode
-  region: europe-west1
+<div class="highlight"><pre><span></span><code><span class="c1"># Central project configuration</span>
+<span class="nt">gcp</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dataascode</span>
+<span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">europe-west1</span>
 
-gke:
-  cluster_name: template-gke-cluster
+<span class="nt">gke</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">template-gke-cluster</span>
 
-artifactory:
-  repository_id: docker-repository
+<span class="nt">artifactory</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">repository_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker-repository</span>
 
-app:
-  image_name: event-driven
-  service_name: event-driven-api  # Must match fullnameOverride in values.yaml
-</code></pre>
+<span class="nt">app</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event-driven</span>
+<span class="w">  </span><span class="nt">service_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event-driven-api</span><span class="w">  </span><span class="c1"># Must match fullnameOverride in values.yaml</span>
+</code></pre></div>
 <p><strong>⚠️ The following files must be manually synchronized with <code>config.yaml</code>:</strong>
 - <code>infra/terraform/tfvars/main.tfvars</code>
 - <code>infra/terraform/tfvars/local.tfvars</code>
@@ -833,31 +833,31 @@ app:
 </table>
 <h2 id="file-details">File Details<a class="headerlink" href="#file-details" title="Permanent link">&para;</a></h2>
 <h3 id="githubworkflowsmainyml"><code>.github/workflows/main.yml</code><a class="headerlink" href="#githubworkflowsmainyml" title="Permanent link">&para;</a></h3>
-<pre><code class="language-yaml">env:
-  GCP_PROJECT_ID: dataascode          # → main.tfvars: project
-  GCP_ZONE: europe-west1              # → main.tfvars: region
-  REPO_ARTIFACTORY: docker-repository # → main.tfvars: artifactory_repository_id
-  GKE_CLUSTER_NAME: template-gke-cluster # → main.tfvars: gke_cluster_name
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="nt">env</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">GCP_PROJECT_ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dataascode</span><span class="w">          </span><span class="c1"># → main.tfvars: project</span>
+<span class="w">  </span><span class="nt">GCP_ZONE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">europe-west1</span><span class="w">              </span><span class="c1"># → main.tfvars: region</span>
+<span class="w">  </span><span class="nt">REPO_ARTIFACTORY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker-repository</span><span class="w"> </span><span class="c1"># → main.tfvars: artifactory_repository_id</span>
+<span class="w">  </span><span class="nt">GKE_CLUSTER_NAME</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">template-gke-cluster</span><span class="w"> </span><span class="c1"># → main.tfvars: gke_cluster_name</span>
+</code></pre></div>
 <h3 id="infraterraformtfvarsmaintfvars"><code>infra/terraform/tfvars/main.tfvars</code><a class="headerlink" href="#infraterraformtfvarsmaintfvars" title="Permanent link">&para;</a></h3>
-<pre><code class="language-hcl">project = &quot;dataascode&quot;                      # → main.yml: GCP_PROJECT_ID
-region  = &quot;europe-west1&quot;                    # → main.yml: GCP_ZONE
-gke_cluster_name = &quot;template-gke-cluster&quot;   # → main.yml: GKE_CLUSTER_NAME
-artifactory_repository_id = &quot;docker-repository&quot; # → main.yml: REPO_ARTIFACTORY
-eventarc_service_name = &quot;event-driven-api&quot;  # → values.yaml: fullnameOverride
+<div class="highlight"><pre><span></span><code><span class="na">project</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;dataascode&quot;</span><span class="c1">                      # → main.yml: GCP_PROJECT_ID</span>
+<span class="na">region</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;europe-west1&quot;</span><span class="c1">                    # → main.yml: GCP_ZONE</span>
+<span class="na">gke_cluster_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;template-gke-cluster&quot;</span><span class="c1">   # → main.yml: GKE_CLUSTER_NAME</span>
+<span class="na">artifactory_repository_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;docker-repository&quot;</span><span class="c1"> # → main.yml: REPO_ARTIFACTORY</span>
+<span class="na">eventarc_service_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;event-driven-api&quot;</span><span class="c1">  # → values.yaml: fullnameOverride</span>
 
-# Event pipelines - add new topics/triggers here
-event_pipelines = {
-  ingest = {
-    topic_name = &quot;event-ingestion&quot;
-    path       = &quot;/api/v1/ingest_event&quot;
-    label      = &quot;event-driven-ingest&quot;
-  }
-}
-</code></pre>
+<span class="c1"># Event pipelines - add new topics/triggers here</span>
+<span class="nb">event_pipelines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">ingest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">topic_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;event-ingestion&quot;</span>
+<span class="w">    </span><span class="na">path</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/api/v1/ingest_event&quot;</span>
+<span class="w">    </span><span class="na">label</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;event-driven-ingest&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 <h3 id="infrahelmvaluesyaml"><code>infra/helm/values.yaml</code><a class="headerlink" href="#infrahelmvaluesyaml" title="Permanent link">&para;</a></h3>
-<pre><code class="language-yaml">fullnameOverride: &quot;event-driven-api&quot;  # → main.tfvars: eventarc_service_name
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="nt">fullnameOverride</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;event-driven-api&quot;</span><span class="w">  </span><span class="c1"># → main.tfvars: eventarc_service_name</span>
+</code></pre></div>
 <h2 id="modification-checklist">Modification Checklist<a class="headerlink" href="#modification-checklist" title="Permanent link">&para;</a></h2>
 <h3 id="change-gcp-project-name">Change GCP Project Name<a class="headerlink" href="#change-gcp-project-name" title="Permanent link">&para;</a></h3>
 <ul>
@@ -985,6 +985,8 @@ event_pipelines = {
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
       
     
   </body>
