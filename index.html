@@ -1251,29 +1251,37 @@
 </ul>
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>graph TD
-    subgraph GCP[Google Cloud Platform]
-        subgraph SharedInfra[Shared Infrastructure (Prod)]
-            VPC[VPC Network]
-            DNS[Cloud DNS]
-            GKE[GKE Cluster Autopilot]
+    subgraph GCP["Google Cloud Platform"]
+        subgraph SharedInfra["Shared Infrastructure (Prod)"]
+            VPC["VPC Network"]
+            DNS["Cloud DNS"]
+            GKE["GKE Cluster Autopilot"]
         end
 
-        subgraph EventFlow[Event Driven Architecture]
-            PubSub[Pub/Sub Topic] --&gt;|Push| Eventarc[Eventarc Trigger]
+        subgraph EventFlow["Event Driven Architecture"]
+            PubSub["Pub/Sub Topic"]
+            Eventarc["Eventarc Trigger"]
         end
 
-        Eventarc --&gt;|Trigger| Service[K8s Service (Cloud Run)]
-
-        subgraph App[Application Layer]
-            Service --&gt; Pods[FastAPI Pods]
-            Pods --&gt;|Write| Delta[Delta Lake (GCS)]
-            Pods --&gt;|Log| Logfire[Logfire Observability]
+        subgraph App["Application Layer"]
+            Service["K8s Service (Cloud Run)"]
+            Pods["FastAPI Pods"]
+            Delta["Delta Lake (GCS)"]
+            Logfire["Logfire Observability"]
         end
     end
 
-    classDef shared fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef event fill:#fff3e0,stroke:#ff6f00,stroke-width:2px;
-    classDef app fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    %% Relationships
+    PubSub --&gt;|Push| Eventarc
+    Eventarc --&gt;|Trigger| Service
+    Service --&gt; Pods
+    Pods --&gt;|Write| Delta
+    Pods --&gt;|Log| Logfire
+
+    %% Styling
+    classDef shared fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000;
+    classDef event fill:#fff3e0,stroke:#ff6f00,stroke-width:2px,color:#000;
+    classDef app fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000;
 
     class VPC,DNS,GKE shared;
     class PubSub,Eventarc event;
