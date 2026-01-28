@@ -422,6 +422,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Mapping Table">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#temporal-cloud-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Temporal Cloud Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -611,6 +628,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Mapping Table">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#temporal-cloud-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Temporal Cloud Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -784,10 +818,12 @@
 <span class="w">  </span><span class="nt">image_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event-driven</span>
 <span class="w">  </span><span class="nt">service_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">event-driven-api</span><span class="w">  </span><span class="c1"># Must match fullnameOverride in values.yaml</span>
 </code></pre></div>
-<p><strong>⚠️ The following files must be manually synchronized with <code>config.yaml</code>:</strong>
-- <code>infra/terraform/tfvars/main.tfvars</code>
-- <code>infra/terraform/tfvars/local.tfvars</code>
-- <code>infra/helm/values.yaml</code></p>
+<p><strong>⚠️ The following files must be manually synchronized with <code>config.yaml</code>:</strong></p>
+<ul>
+<li><code>infra/terraform/tfvars/main.tfvars</code></li>
+<li><code>infra/terraform/tfvars/local.tfvars</code></li>
+<li><code>infra/helm/values.yaml</code></li>
+</ul>
 <h2 id="mapping-table">Mapping Table<a class="headerlink" href="#mapping-table" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -828,6 +864,33 @@
 <td>-</td>
 <td><code>eventarc_service_name = "event-driven-api"</code></td>
 <td><code>fullnameOverride: "event-driven-api"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="temporal-cloud-configuration">Temporal Cloud Configuration<a class="headerlink" href="#temporal-cloud-configuration" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Location</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TEMPORAL_ADDRESS</strong></td>
+<td><code>api/utils/config.py</code></td>
+<td>Temporal Cloud endpoint</td>
+</tr>
+<tr>
+<td><strong>TEMPORAL_NAMESPACE</strong></td>
+<td><code>api/utils/config.py</code></td>
+<td>Temporal namespace</td>
+</tr>
+<tr>
+<td><strong>TEMPORAL_API_KEY</strong></td>
+<td>Google Secret Manager</td>
+<td>API key for authentication</td>
 </tr>
 </tbody>
 </table>

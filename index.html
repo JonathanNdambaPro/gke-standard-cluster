@@ -1243,11 +1243,13 @@
 <li>📊 <strong>Observability</strong>: Structured logging with Logfire and Loguru integration</li>
 <li>🔐 <strong>Secret Management</strong>: Secure token storage via Google Secret Manager</li>
 <li>🏗️ <strong>Infrastructure as Code</strong>: Complete Terraform modules for GCP deployment</li>
-<li>🐳 <strong>Multi-Tag Docker</strong>: Automatic image tagging with SHA, timestamp, and latest</li>
+<li>🐳 <strong>Docker Compose</strong>: Local development with GCP credentials volume mounting</li>
 <li>🎯 <strong>Event-Driven Architecture</strong>: Native Cloud Run service integration with Eventarc</li>
 <li>🛡️ <strong>Secure Storage</strong>: GCS access with least-privilege IAM policies</li>
 <li>⚡ <strong>Ephemeral Environments</strong>: Automatic per-PR environment creation on Shared Cluster</li>
 <li>🧩 <strong>Shared Infrastructure</strong>: Efficient resource usage with consolidated GKE/VPC</li>
+<li>⏱️ <strong>Temporal Cloud</strong>: Durable workflow orchestration with ephemeral workers</li>
+<li>🔁 <strong>Ephemeral Workers</strong>: Workers start/stop per request for efficient resource usage</li>
 </ul>
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>graph TD
@@ -1286,16 +1288,19 @@
     class VPC,DNS,GKE shared;
     class PubSub,Eventarc event;
     class Service,Pods,Delta,Logfire app;</code></pre>
-<p>The system follows an event-driven pattern where:
-1. Events are published to a Pub/Sub topic
-2. Eventarc triggers the Cloud Run service via native integration
-3. FastAPI API receives and validates the CloudEvent
-4. Data is decoded from base64 and parsed as JSON
-5. A unique ID is generated using SHA256 hash of event content
-6. Data is validated with Pydantic models
-7. Events are processed with Polars DataFrames
-8. Events are upserted into Delta Lake tables on GCS (merge on content hash)
-9. Tables are automatically optimized (compact + vacuum)</p>
+<p>The system follows an event-driven pattern where:</p>
+<ol>
+<li>Events are published to a Pub/Sub topic</li>
+<li>Eventarc triggers the GKE service via native integration</li>
+<li>FastAPI API receives and validates the CloudEvent</li>
+<li>Data is decoded from base64 and parsed as JSON</li>
+<li>A unique ID is generated using SHA256 hash of event content</li>
+<li>Data is validated with Pydantic models</li>
+<li><strong>Temporal Workflow</strong> is triggered with ephemeral worker</li>
+<li>Events are processed and upserted into Delta Lake tables on GCS</li>
+<li>Tables are automatically optimized (compact + vacuum)</li>
+<li>Worker shuts down and response is returned</li>
+</ol>
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
 <h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1318,16 +1323,22 @@
 </code></pre></div></p>
 </li>
 <li>
-<p><strong>Run the API locally</strong>
-   <div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>uvicorn<span class="w"> </span>api.app:app<span class="w"> </span>--reload
-</code></pre></div></p>
-</li>
-<li>
-<p><strong>Run tests</strong>
-   <div class="highlight"><pre><span></span><code>make<span class="w"> </span><span class="nb">test</span>
-</code></pre></div></p>
+<p><strong>Run the API locally (with Docker Compose)</strong></p>
 </li>
 </ol>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>--build
+</code></pre></div>
+<p>This mounts your GCP credentials automatically from <code>~/.config/gcloud/application_default_credentials.json</code>.</p>
+<ol>
+<li><strong>Or run without Docker</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>uvicorn<span class="w"> </span>api.app:app<span class="w"> </span>--reload
+</code></pre></div>
+<ol>
+<li><strong>Run tests</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
 <h3 id="infrastructure-deployment">Infrastructure Deployment<a class="headerlink" href="#infrastructure-deployment" title="Permanent link">&para;</a></h3>
 <ol>
 <li>

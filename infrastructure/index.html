@@ -439,6 +439,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#6-temporal-cloud-external-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Temporal Cloud (External Service)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -688,6 +699,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#6-temporal-cloud-external-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Temporal Cloud (External Service)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -823,9 +845,16 @@
         end
     end
 
+    subgraph External["External Services"]
+        Temporal["Temporal Cloud"]
+    end
+
+    GKE -.-&gt;|Workflows| Temporal
+
     style VPC fill:#e1f5fe,stroke:#01579b
     style GKE fill:#e8f5e9,stroke:#2e7d32
-    style PubSub fill:#fff3e0,stroke:#ff6f00</code></pre>
+    style PubSub fill:#fff3e0,stroke:#ff6f00
+    style Temporal fill:#f3e5f5,stroke:#7b1fa2</code></pre>
 <h2 id="module-dependencies">Module Dependencies<a class="headerlink" href="#module-dependencies" title="Permanent link">&para;</a></h2>
 <p>The Terraform configuration is split into functional layers.</p>
 <pre class="mermaid"><code>graph LR
@@ -851,12 +880,10 @@
 <ul>
 <li><strong>Cluster</strong>: GKE Standard regional cluster.</li>
 <li><strong>Node Pools</strong>: Dedicated node pools (e.g., <code>primary-pool</code>).</li>
-<li><strong>Security</strong>:<ul>
+<li><strong>Security</strong>:</li>
 <li>Workload Identity enabled.</li>
 <li>Shielded Nodes enabled.</li>
 <li>Private nodes (no external IPs on nodes).</li>
-</ul>
-</li>
 </ul>
 <h3 id="3-dns-domains-modulescloud-dns-modulescloud-domains">3. DNS &amp; Domains (<code>modules/cloud-dns</code>, <code>modules/cloud-domains</code>)<a class="headerlink" href="#3-dns-domains-modulescloud-dns-modulescloud-domains" title="Permanent link">&para;</a></h3>
 <ul>
@@ -874,12 +901,19 @@
 </ul>
 <h3 id="5-security-iam-modulessecurity-modulesservice-accounts">5. Security &amp; IAM (<code>modules/security</code>, <code>modules/service-accounts</code>)<a class="headerlink" href="#5-security-iam-modulessecurity-modulesservice-accounts" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Service Accounts</strong>:<ul>
+<li><strong>Service Accounts</strong>:</li>
 <li><code>cloudrun-runtime</code>: Used by Pods (Workload Identity).</li>
 <li><code>eventarc-triggers</code>: Used by Eventarc to invoke the service.</li>
-</ul>
-</li>
 <li><strong>SSL Policy</strong>: Enforces TLS 1.2+ configuration for the Load Balancer.</li>
+</ul>
+<h3 id="6-temporal-cloud-external-service">6. Temporal Cloud (External Service)<a class="headerlink" href="#6-temporal-cloud-external-service" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Durable Workflows</strong>: Orchestrates long-running business processes with automatic retries.</li>
+<li><strong>Ephemeral Workers</strong>: Workers are created per-request and destroyed after execution for efficient resource usage.</li>
+<li><strong>Configuration</strong>:</li>
+<li><code>TEMPORAL_ADDRESS</code>: Temporal Cloud endpoint (e.g., <code>europe-west3.gcp.api.temporal.io:7233</code>)</li>
+<li><code>TEMPORAL_NAMESPACE</code>: Your Temporal namespace</li>
+<li><code>TEMPORAL_API_KEY</code>: Stored in Google Secret Manager</li>
 </ul>
 <h2 id="architecture-strategy">Architecture Strategy 🧠<a class="headerlink" href="#architecture-strategy" title="Permanent link">&para;</a></h2>
 <h3 id="shared-cluster-topology">Shared Cluster Topology<a class="headerlink" href="#shared-cluster-topology" title="Permanent link">&para;</a></h3>
