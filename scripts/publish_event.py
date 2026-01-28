@@ -3,7 +3,7 @@
 Script to publish a test message to Pub/Sub with exponential backoff retry.
 
 Usage:
-    python scripts/publish_event.py
+    python scripts/publish_event.py [ingest|temporal]
 """
 
 import json
@@ -17,7 +17,8 @@ from pydantic import BaseModel, Field
 
 # Configuration - matches config.yaml
 PROJECT_ID = "dataascode"
-TOPIC_ID = "event-ingestion"
+TOPIC_ID_INGEST = "event-ingestion"
+TOPIC_ID_TEMPORAL = "temporal-workflow"
 
 # Retry configuration
 MAX_RETRIES = 10
@@ -50,10 +51,14 @@ CONFIG = PublishConfig()
 MESSAGE = SchemaMessage(name="John", lastname="Doe")
 
 
-def publish_with_retry(message_data: SchemaMessage = MESSAGE, config: PublishConfig = CONFIG) -> None:
+def publish_with_retry(
+    topic_id: str,
+    message_data: SchemaMessage = MESSAGE,
+    config: PublishConfig = CONFIG,
+) -> None:
     """Publish a message to Pub/Sub with exponential backoff retry."""
     publisher = pubsub_v1.PublisherClient()
-    topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+    topic_path = publisher.topic_path(PROJECT_ID, topic_id)
     data = message_data.model_dump_json().encode("utf-8")
 
     try:
@@ -72,13 +77,13 @@ def publish_with_retry(message_data: SchemaMessage = MESSAGE, config: PublishCon
 
     except GoogleAPICallError as e:
         logger.error(f"❌ All retries failed: {e}")
-        send_to_dlq(message_data, str(e))
+        send_to_dlq(topic_id, message_data, str(e))
 
 
-def send_to_dlq(message_data: dict, error: str) -> None:
+def send_to_dlq(topic_id: str, message_data: dict, error: str) -> None:
     """Send failed message to Dead Letter Queue."""
     publisher = pubsub_v1.PublisherClient()
-    dlq_topic_path = publisher.topic_path(PROJECT_ID, f"{TOPIC_ID}-dlq")
+    dlq_topic_path = publisher.topic_path(PROJECT_ID, f"{topic_id}-dlq")
 
     dlq_message = {
         "original_message": message_data,
@@ -97,4 +102,5 @@ def send_to_dlq(message_data: dict, error: str) -> None:
 
 
 if __name__ == "__main__":
-    publish_with_retry(MESSAGE)
+    logger.info("🕐 Publishing to Temporal workflow topic...")
+    publish_with_retry(TOPIC_ID_TEMPORAL, MESSAGE)

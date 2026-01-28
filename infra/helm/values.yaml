@@ -5,10 +5,10 @@
 replicaCount: 5
 
 image:
-  repository: stacksimplify/kube-nginxapp1
+  repository: europe-west1-docker.pkg.dev/dataascode/docker-repository/event-driven
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.0.0"
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""

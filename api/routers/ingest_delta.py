@@ -13,7 +13,7 @@ from temporalio.client import Client
 from temporalio.worker import Worker
 
 from api.docs.ingest_delta import docs_ingest_event
-from api.models.events import EventModelV1
+from api.models.events import EventInputModel, EventModelV1
 from api.temporal_workflows.client import get_temporal_client
 from api.temporal_workflows.hello.workflow import YourWorkflow
 from api.temporal_workflows.hello.your_activities_dacx import your_activity
@@ -84,9 +84,20 @@ async def ingest_delta(request: Request):
 
 
 @router.post("/temporal_hello")
-async def temporal_hello(request: Request, client_temporal: Client = Depends(get_temporal_client)):  # noqa: B008
-    # Récupérer le body JSON directement (test local, pas de Eventarc)
-    body = await request.json()
+async def temporal_hello(
+    event_input: EventInputModel,
+    client_temporal: Client = Depends(get_temporal_client),  # noqa: B008
+):
+    """
+    {
+        {
+            "name": "Jonathan",
+            "lastname": "Ndamba"
+        }
+    }
+    """
+    """Endpoint pour tester le workflow Temporal en local."""
+    body = event_input.model_dump()
 
     unique_id = generate_unique_id(body)
 

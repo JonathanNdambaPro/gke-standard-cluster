@@ -85,8 +85,6 @@ helm_manifest:
 
 .PHONY: helm_update
 helm_update:
-	helm dependency update infra/helm
-# 	# 2. Déployer la modification
 	helm upgrade --install event-driven-api infra/helm \
 	--namespace default \
 	--create-namespace \
@@ -110,5 +108,10 @@ help:
 .PHONY: docker_compose_up
 docker_compose_up:
 	docker compose up --build
+
+.PHONY: locust_load_test
+locust_load_test:
+	uv run locust -f scripts/locustfile.py --host=http://localhost:8000
+
 
 .DEFAULT_GOAL := help
