@@ -1,16 +1,19 @@
 import base64
 import hashlib
 import json
+import uuid
 from pathlib import Path
 
 import logfire
 import polars as pl
 from deltalake import DeltaTable, write_deltalake
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from loguru import logger
+from temporalio.client import Client
 
 from api.docs.ingest_delta import docs_ingest_event
 from api.models.events import EventModelV1
+from api.temporal_workflows.client import get_temporal_client
 from api.utils.config import settings
 from api.utils.secrets import get_secret_from_gcp
 
@@ -81,3 +84,26 @@ async def ingest_delta(request: Request):
     logger.info(f"✨ Table {GCS_PATH} create")
 
     return {"status": "success", "message_data": data_decoded_str}
+
+
+@router.post("/temporal_hello_world")
+async def temporal_hello_world(request: Request, client_temporal: Client = Depends(get_temporal_client)):  # noqa: B008
+    cloudevent = await request.json()
+    pubsub_data_base64 = cloudevent.get("message").get("data")
+    data_decoded_str = base64.b64decode(pubsub_data_base64).decode("utf-8")
+    data_decoded = json.loads(data_decoded_str)
+
+    unique_id = generate_unique_id(data_decoded)
+
+    logger.info(f"🗓️ CloudEvent Pub/Sub decoded: {data_decoded}")
+    logger.info(f"🆔 ID unique généré: {unique_id}")
+    logger.info(f"🔖 CE-ID original: {request.headers.get('ce-id')}")
+    logger.info(f"🏷️ Type (ce-type): {request.headers.get('ce-type')}")
+
+    result = await client_temporal.execute_workflow(
+        "SayHelloWorkflow",
+        "Temporal",
+        id=f"say-hello-workflow-{uuid.uuid4()}",
+        task_queue="my-task-queue",
+    )
+    logger.info("Workflow result:", result)
