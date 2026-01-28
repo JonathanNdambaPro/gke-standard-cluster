@@ -42,13 +42,13 @@ event_pipelines = {
     path       = "/api/v1/ingest_event"
     label      = "event-driven-ingest"
   }
-  # Example: add more pipelines as needed
-  # analytics = {
-  #   topic_name = "event-analytics"
-  #   path       = "/api/v1/analytics"
-  #   label      = "event-driven-analytics"
-  # }
+  temporal = {
+    topic_name = "temporal-workflow"
+    path       = "/api/v1/temporal_hello_eventarc"
+    label      = "temporal-workflow-trigger"
+  }
 }
+
 
 # GKE Service Configuration
 eventarc_service_name       = "event-driven-api"
