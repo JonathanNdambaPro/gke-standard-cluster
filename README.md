@@ -21,11 +21,13 @@ An event-driven architecture implementation on Google Cloud Platform that ingest
 - 📊 **Observability**: Structured logging with Logfire and Loguru integration
 - 🔐 **Secret Management**: Secure token storage via Google Secret Manager
 - 🏗️ **Infrastructure as Code**: Complete Terraform modules for GCP deployment
-- 🐳 **Multi-Tag Docker**: Automatic image tagging with SHA, timestamp, and latest
+- 🐳 **Docker Compose**: Local development with GCP credentials volume mounting
 - 🎯 **Event-Driven Architecture**: Native Cloud Run service integration with Eventarc
 - 🛡️ **Secure Storage**: GCS access with least-privilege IAM policies
 - ⚡ **Ephemeral Environments**: Automatic per-PR environment creation on Shared Cluster
 - 🧩 **Shared Infrastructure**: Efficient resource usage with consolidated GKE/VPC
+- ⏱️ **Temporal Cloud**: Durable workflow orchestration with ephemeral workers
+- 🔁 **Ephemeral Workers**: Workers start/stop per request for efficient resource usage
 
 ## Architecture
 
@@ -69,15 +71,17 @@ graph TD
 ```
 
 The system follows an event-driven pattern where:
+
 1. Events are published to a Pub/Sub topic
-2. Eventarc triggers the Cloud Run service via native integration
+2. Eventarc triggers the GKE service via native integration
 3. FastAPI API receives and validates the CloudEvent
 4. Data is decoded from base64 and parsed as JSON
 5. A unique ID is generated using SHA256 hash of event content
 6. Data is validated with Pydantic models
-7. Events are processed with Polars DataFrames
-8. Events are upserted into Delta Lake tables on GCS (merge on content hash)
+7. **Temporal Workflow** is triggered with ephemeral worker
+8. Events are processed and upserted into Delta Lake tables on GCS
 9. Tables are automatically optimized (compact + vacuum)
+10. Worker shuts down and response is returned
 
 ## Quick Start
 
@@ -101,12 +105,22 @@ The system follows an event-driven pattern where:
    make install
    ```
 
-3. **Run the API locally**
+3. **Run the API locally (with Docker Compose)**
+
+   ```bash
+   docker compose up --build
+   ```
+
+   This mounts your GCP credentials automatically from `~/.config/gcloud/application_default_credentials.json`.
+
+4. **Or run without Docker**
+
    ```bash
    uv run uvicorn api.app:app --reload
    ```
 
-4. **Run tests**
+5. **Run tests**
+
    ```bash
    make test
    ```

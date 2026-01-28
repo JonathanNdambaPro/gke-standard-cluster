@@ -3,16 +3,16 @@ from datetime import timedelta
 from temporalio import workflow
 
 with workflow.unsafe.imports_passed_through():
+    from api.models.events import EventModelV1
     from api.temporal_workflows.hello.your_activities_dacx import your_activity
-    from api.temporal_workflows.hello.your_dataobject_dacx import YourParams
 
 
 @workflow.defn(name="YourWorkflow")
 class YourWorkflow:
     @workflow.run
-    async def run(self, name: str) -> str:
+    async def run(self, event_model_v1: EventModelV1) -> str:
         return await workflow.execute_activity(
             your_activity,
-            YourParams("Hello", name),
+            event_model_v1,
             start_to_close_timeout=timedelta(seconds=10),
         )

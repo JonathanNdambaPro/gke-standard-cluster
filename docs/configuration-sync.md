@@ -22,6 +22,7 @@ app:
 ```
 
 **⚠️ The following files must be manually synchronized with `config.yaml`:**
+
 - `infra/terraform/tfvars/main.tfvars`
 - `infra/terraform/tfvars/local.tfvars`
 - `infra/helm/values.yaml`
@@ -35,6 +36,14 @@ app:
 | **Cluster Name** | `GKE_CLUSTER_NAME: template-gke-cluster` | `gke_cluster_name = "template-gke-cluster"` | - |
 | **Artifact Repository** | `REPO_ARTIFACTORY: docker-repository` | `artifactory_repository_id = "docker-repository"` | - |
 | **K8s Service Name** | - | `eventarc_service_name = "event-driven-api"` | `fullnameOverride: "event-driven-api"` |
+
+### Temporal Cloud Configuration
+
+| Value | Location | Description |
+|-------|----------|-------------|
+| **TEMPORAL_ADDRESS** | `api/utils/config.py` | Temporal Cloud endpoint |
+| **TEMPORAL_NAMESPACE** | `api/utils/config.py` | Temporal namespace |
+| **TEMPORAL_API_KEY** | Google Secret Manager | API key for authentication |
 
 ## File Details
 

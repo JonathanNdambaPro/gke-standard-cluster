@@ -10,21 +10,18 @@ from deltalake import DeltaTable, write_deltalake
 from fastapi import APIRouter, Depends, Request
 from loguru import logger
 from temporalio.client import Client
+from temporalio.worker import Worker
 
 from api.docs.ingest_delta import docs_ingest_event
 from api.models.events import EventModelV1
 from api.temporal_workflows.client import get_temporal_client
+from api.temporal_workflows.hello.workflow import YourWorkflow
+from api.temporal_workflows.hello.your_activities_dacx import your_activity
 from api.utils.config import settings
-from api.utils.secrets import get_secret_from_gcp
 
 router = APIRouter(tags=["ingest"])
 
-logfire_token = get_secret_from_gcp(
-    project_id=settings.GCP_PROJECT_ID,
-    secret_name=settings.LOGFIRE_SECRET_NAME,
-)
-
-logfire.configure(token=logfire_token)
+logfire.configure(token=settings.LOGFIRE_TOKEN)
 logger.configure(handlers=[logfire.loguru_handler()])
 
 PATH_TO_FOLDER_JINJA_SQL = Path(__file__).parent / "sql"
@@ -86,8 +83,42 @@ async def ingest_delta(request: Request):
     return {"status": "success", "message_data": data_decoded_str}
 
 
-@router.post("/temporal_hello_world")
-async def temporal_hello_world(request: Request, client_temporal: Client = Depends(get_temporal_client)):  # noqa: B008
+@router.post("/temporal_hello")
+async def temporal_hello(request: Request, client_temporal: Client = Depends(get_temporal_client)):  # noqa: B008
+    # Récupérer le body JSON directement (test local, pas de Eventarc)
+    body = await request.json()
+
+    unique_id = generate_unique_id(body)
+
+    logger.info(f"🗓️ Request body: {body}")
+    logger.info(f"🆔 ID unique généré: {unique_id}")
+
+    # Créer le modèle EventModelV1 depuis le body
+    data_to_ingest = EventModelV1(id=unique_id, **body)
+
+    task_queue = "hello-task-queue"
+
+    worker = Worker(
+        client_temporal,
+        task_queue=task_queue,
+        workflows=[YourWorkflow],
+        activities=[your_activity],
+    )
+
+    async with worker:
+        result = await client_temporal.execute_workflow(
+            YourWorkflow.run,
+            data_to_ingest,
+            id=f"your-workflow-id-{uuid.uuid4()}",
+            task_queue=task_queue,
+        )
+
+    logger.info(f"Workflow result: {result}")
+    return {"status": "success", "result": result}
+
+
+@router.post("/temporal_hello_eventarc")
+async def temporal_hello_eventarc(request: Request, client_temporal: Client = Depends(get_temporal_client)):  # noqa: B008
     cloudevent = await request.json()
     pubsub_data_base64 = cloudevent.get("message").get("data")
     data_decoded_str = base64.b64decode(pubsub_data_base64).decode("utf-8")
@@ -100,10 +131,23 @@ async def temporal_hello_world(request: Request, client_temporal: Client = Depen
     logger.info(f"🔖 CE-ID original: {request.headers.get('ce-id')}")
     logger.info(f"🏷️ Type (ce-type): {request.headers.get('ce-type')}")
 
-    result = await client_temporal.execute_workflow(
-        "SayHelloWorkflow",
-        "Temporal",
-        id=f"say-hello-workflow-{uuid.uuid4()}",
-        task_queue="my-task-queue",
+    data_to_ingest = EventModelV1(id=unique_id, **data_decoded)
+    task_queue = "hello-task-queue-eventarc"
+
+    worker = Worker(
+        client_temporal,
+        task_queue=task_queue,
+        workflows=[YourWorkflow],
+        activities=[your_activity],
     )
-    logger.info("Workflow result:", result)
+
+    async with worker:
+        result = await client_temporal.execute_workflow(
+            YourWorkflow.run,
+            data_to_ingest,
+            id=f"your-workflow-id-{uuid.uuid4()}",
+            task_queue=task_queue,
+        )
+
+    logger.info(f"Workflow result: {result}")
+    return {"status": "success", "result": result}

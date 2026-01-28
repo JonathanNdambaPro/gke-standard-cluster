@@ -45,10 +45,18 @@ graph TD
         end
     end
 
+    subgraph External["External Services"]
+        Temporal["Temporal Cloud"]
+    end
+
+    GKE -.->|Workflows| Temporal
+
     style VPC fill:#e1f5fe,stroke:#01579b
     style GKE fill:#e8f5e9,stroke:#2e7d32
     style PubSub fill:#fff3e0,stroke:#ff6f00
+    style Temporal fill:#f3e5f5,stroke:#7b1fa2
 ```
+
 
 ## Module Dependencies
 
@@ -72,17 +80,19 @@ graph LR
 ## Detailed Modules
 
 ### 1. Core Networking (`modules/network`)
-*   **VPC**: Custom VPC network (not using default).
-*   **Subnet**: Specific subnet (`10.0.0.0/24`) with secondary ranges for Pods and Services (VPC-native).
-*   **Global Address**: Reserves a static external IP (`google_compute_global_address`) used by the Ingress Controller.
+
+* **VPC**: Custom VPC network (not using default).
+* **Subnet**: Specific subnet (`10.0.0.0/24`) with secondary ranges for Pods and Services (VPC-native).
+* **Global Address**: Reserves a static external IP (`google_compute_global_address`) used by the Ingress Controller.
 
 ### 2. Compute (`modules/gke-cluster`)
-*   **Cluster**: GKE Standard regional cluster.
-*   **Node Pools**: Dedicated node pools (e.g., `primary-pool`).
-*   **Security**:
-    *   Workload Identity enabled.
-    *   Shielded Nodes enabled.
-    *   Private nodes (no external IPs on nodes).
+
+* **Cluster**: GKE Standard regional cluster.
+* **Node Pools**: Dedicated node pools (e.g., `primary-pool`).
+* **Security**:
+  * Workload Identity enabled.
+  * Shielded Nodes enabled.
+  * Private nodes (no external IPs on nodes).
 
 ### 3. DNS & Domains (`modules/cloud-dns`, `modules/cloud-domains`)
 *   **Cloud DNS**: Manages the managed zone `templatejojotest.com`.
@@ -95,10 +105,20 @@ graph LR
     *   *Note*: Requires the GKE Service to be exposed internally or via Cloud Run for Anthos (here using native GKE destinations).
 
 ### 5. Security & IAM (`modules/security`, `modules/service-accounts`)
-*   **Service Accounts**:
-    *   `cloudrun-runtime`: Used by Pods (Workload Identity).
-    *   `eventarc-triggers`: Used by Eventarc to invoke the service.
-*   **SSL Policy**: Enforces TLS 1.2+ configuration for the Load Balancer.
+
+- **Service Accounts**:
+  - `cloudrun-runtime`: Used by Pods (Workload Identity).
+  - `eventarc-triggers`: Used by Eventarc to invoke the service.
+- **SSL Policy**: Enforces TLS 1.2+ configuration for the Load Balancer.
+
+### 6. Temporal Cloud (External Service)
+
+- **Durable Workflows**: Orchestrates long-running business processes with automatic retries.
+- **Ephemeral Workers**: Workers are created per-request and destroyed after execution for efficient resource usage.
+- **Configuration**:
+  - `TEMPORAL_ADDRESS`: Temporal Cloud endpoint (e.g., `europe-west3.gcp.api.temporal.io:7233`)
+  - `TEMPORAL_NAMESPACE`: Your Temporal namespace
+  - `TEMPORAL_API_KEY`: Stored in Google Secret Manager
 
 ## Architecture Strategy 🧠
 

@@ -1,7 +1,8 @@
 from temporalio import activity
-from your_dataobject_dacx import YourParams
+
+from api.models.events import EventModelV1
 
 
 @activity.defn(name="your_activity")
-async def your_activity(input_value: YourParams) -> str:
-    return f"{input_value.greeting}, {input_value.name}!"
+async def your_activity(input_hello: EventModelV1) -> str:
+    return f"hello {input_hello.name}, {input_hello.lastname}!"
