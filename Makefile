@@ -109,9 +109,13 @@ help:
 docker_compose_up:
 	docker compose up --build
 
-.PHONY: locust_load_test
-locust_load_test:
+.PHONY: locust_load_test_local
+locust_load_test_local:
 	uv run locust -f scripts/locustfile.py --host=http://localhost:8000
 
+
+.PHONY: locust_load_test_prod
+locust_load_test_prod:
+	uv run locust -f scripts/locustfile.py --host=https://templatejojotest.com
 
 .DEFAULT_GOAL := help

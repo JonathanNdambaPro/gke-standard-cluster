@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: #Dictionary
-  name: {{ include "helm.fullname" . }}
+  name: {{ include "helm.fullname" . }}-client
   labels:
     {{- include "helm.labels" . | nindent 4 }}
 spec: # Dictionary
@@ -24,7 +24,7 @@ spec: # Dictionary
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers: # List
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-client
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:

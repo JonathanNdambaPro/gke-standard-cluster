@@ -142,3 +142,12 @@ persistence:
   accessMode: ReadWriteOnce
   size: 50Gi
   storageClass: standard-rwo
+
+worker:
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 1000m
+    limits:
+      memory: 4Gi
+      cpu: 2000m

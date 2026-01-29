@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # On ajoute "-worker" au nom pour ne pas écraser l'API
+  name: {{ include "helm.fullname" . }}-worker
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.worker.replicaCount | default .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "helm.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      labels:
+        {{- include "helm.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: worker
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}-worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          # --- C'EST ICI QUE LA MAGIE OPERE ---
+          # On remplace le CMD du Dockerfile pour lancer le script du worker
+          command: ["uv", "run", "python", "api/temporal_workflows/hello/worker.py"]
+          resources:
+            {{- toYaml .Values.worker.resources | default .Values.resources | nindent 12 }}
+          # Les probes pour un worker se font souvent via un check de processus
+          livenessProbe:
+            exec:
+              command: ["pgrep", "-f", "api/temporal_workflows/hello/worker.py"]
+            initialDelaySeconds: 30
+            periodSeconds: 20
