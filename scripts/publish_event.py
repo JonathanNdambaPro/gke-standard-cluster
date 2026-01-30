@@ -8,17 +8,19 @@ Usage:
 
 import json
 import time
+from enum import StrEnum
 
 from google.api_core import retry as api_retry
 from google.api_core.exceptions import GoogleAPICallError
 from google.cloud import pubsub_v1
 from loguru import logger
 from pydantic import BaseModel, Field
-from enum import StrEnum
+
 
 class Topic(StrEnum):
     TOPIC_ID_INGEST = "event-ingestion"
     TOPIC_ID_TEMPORAL = "temporal-workflow"
+
 
 # Configuration - matches config.yaml
 PROJECT_ID = "dataascode"

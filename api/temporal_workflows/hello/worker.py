@@ -19,7 +19,6 @@ async def main():
 import asyncio
 
 from loguru import logger
-from temporalio.client import Client
 from temporalio.worker import Worker
 
 from api.temporal_workflows.client import get_temporal_client
@@ -28,8 +27,7 @@ from api.temporal_workflows.hello.your_activities_dacx import your_activity
 
 
 async def main():
-    client_temporal = await get_temporal_client()
-    client = await Client.connect(client_temporal)
+    client = await get_temporal_client()
 
     worker = Worker(
         client,
@@ -43,8 +41,7 @@ async def main():
 
 
 async def mutiple_main():
-    client_temporal = await get_temporal_client()
-    client = await Client.connect(client_temporal)
+    client = await get_temporal_client()
 
     worker = Worker(
         client,
