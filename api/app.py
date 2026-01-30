@@ -6,22 +6,23 @@ from .utils.config import Settings
 settings = Settings()
 
 description = """
-Event-Driven GCP API 🚀
+Cutting Edge Event-Driven GCP API 🚀
 
-## Features
+A State-of-the-Art data platform leveraging the modern python streaming stack.
 
-**Event Ingestion**: Receive and process CloudEvents via Pub/Sub
-**Delta Lake Storage**: Data persistence in Delta Lake tables on GCS
-**Automatic UPSERT**: Intelligent merge of events based on ID
-**Automatic Optimization**: Table compaction and cleanup after each ingestion
-**Observability**: Structured logging with Logfire and Loguru
+## ✨ Features
 
-## Architecture
+* **⚡ Ultra-Fast Processing**: Powered by **Polars** for lightning-fast data manipulation.
+* **⏱️ Durable Execution**: Robust workflow orchestration with **Temporal**.
+* **🗄️ ACID Storage**: Reliable **Delta Lake** tables on Google Cloud Storage.
+* **🔍 Next-Gen Observability**: Deep insights with **Logfire**.
+* **🚀 Modern Infra**: Cloud-Native deployment on **GKE Standard** with **Eventarc**.
 
-* **Event-Driven**: Event-based architecture with Google Cloud Pub/Sub
-* **Delta Lake**: ACID-compliant storage with merge and time-travel support
-* **Cloud Run**: Serverless deployment on Google Cloud Platform
-* **Eventarc**: Cloud-native event routing
+## 🏗️ Architecture
+
+* **Event-Driven**: Decoupled architecture using **Pub/Sub**.
+* **Serverless-like**: Auto-scaling worker deployments on Kubernetes.
+* **Declarative**: Infrastructure as Code with Terraform.
 """
 
 app = FastAPI(

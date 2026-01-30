@@ -49,7 +49,7 @@ graph TD
         Temporal["Temporal Cloud"]
     end
 
-    GKE -.->|Workflows| Temporal
+    GKE -.->|Workers Poll| Temporal
 
     style VPC fill:#e1f5fe,stroke:#01579b
     style GKE fill:#e8f5e9,stroke:#2e7d32
@@ -102,7 +102,7 @@ graph LR
 ### 4. Event Driven (`modules/pubsub`, `modules/eventarc`)
 *   **Pub/Sub**: Creates topics (`event-ingestion`) and subscriptions.
 *   **Eventarc**: Creates triggers that listen to Pub/Sub messages and forward them to the GKE Service (`event-driven-api`).
-    *   *Note*: Requires the GKE Service to be exposed internally or via Cloud Run for Anthos (here using native GKE destinations).
+    *   *Note*: Requires the GKE Service to be exposed internally (using GKE native destinations).
 
 ### 5. Security & IAM (`modules/security`, `modules/service-accounts`)
 
@@ -114,7 +114,7 @@ graph LR
 ### 6. Temporal Cloud (External Service)
 
 - **Durable Workflows**: Orchestrates long-running business processes with automatic retries.
-- **Ephemeral Workers**: Workers are created per-request and destroyed after execution for efficient resource usage. (See [Adding Workers](kubernetes.md#adding-temporal-workers))
+- **Worker Deployment**: Workers run as persistent Kubernetes Deployments to poll the Temporal Task Queue. (See [Adding Workers](kubernetes.md#adding-temporal-workers))
 - **Configuration**:
   - `TEMPORAL_ADDRESS`: Temporal Cloud endpoint (e.g., `europe-west3.gcp.api.temporal.io:7233`)
   - `TEMPORAL_NAMESPACE`: Your Temporal namespace

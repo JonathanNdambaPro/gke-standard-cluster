@@ -30,12 +30,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
 
-          # --- C'EST ICI QUE LA MAGIE OPERE ---
           # On remplace le CMD du Dockerfile pour lancer le script du worker
           command: ["uv", "run", "python", "-m", "api.temporal_workflows.hello.worker"]
           resources:
             {{- toYaml .Values.worker.resources | default .Values.resources | nindent 12 }}
-          # Les probes pour un worker se font souvent via un check de processus
           livenessProbe:
             exec:
               command: ["pgrep", "-f", "api.temporal_workflows.hello.worker"]

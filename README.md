@@ -1,4 +1,4 @@
-# Event-Driven GCP 🚀
+# Cutting Edge Event-Driven GCP Platform 🚀
 
 [![Release](https://img.shields.io/github/v/release/jojo/event-driven-gcp)](https://img.shields.io/github/v/release/jojo/event-driven-gcp)
 [![Build status](https://img.shields.io/github/actions/workflow/status/jojo/event-driven-gcp/main.yml?branch=main)](https://github.com/jojo/event-driven-gcp/actions/workflows/main.yml?query=branch%3Amain)
@@ -6,28 +6,27 @@
 [![Commit activity](https://img.shields.io/github/commit-activity/m/jojo/event-driven-gcp)](https://img.shields.io/github/commit-activity/m/jojo/event-driven-gcp)
 [![License](https://img.shields.io/github/license/jojo/event-driven-gcp)](https://img.shields.io/github/license/jojo/event-driven-gcp)
 
-An event-driven architecture implementation on Google Cloud Platform that ingests CloudEvents from Pub/Sub and stores them in Delta Lake format on GCS.
+A state-of-the-art **Modern Data Platform** on Google Cloud Platform.
+It leverages the power of **Temporal**, **Delta Lake**, and **Polars** on **GKE Standard** to provide a robust, scalable, and ultra-fast event ingestion pipeline.
 
 - **Github repository**: <https://github.com/jojo/event-driven-gcp/>
 - **Documentation**: <https://jojo.github.io/event-driven-gcp/>
 
 ## Features
 
-- ✨ **CloudEvent Ingestion**: Receive and process CloudEvents via Google Cloud Pub/Sub
-- 🗄️ **Delta Lake Storage**: ACID-compliant storage with merge and time-travel capabilities
-- 🔄 **Content-Based Deduplication**: Hash-based unique ID generation to prevent duplicate events
-- ⚡ **Auto-Optimization**: Automatic table compaction and vacuum after ingestion
-- 🐻‍❄️ **Polars Integration**: High-performance DataFrame operations for data processing
-- 📊 **Observability**: Structured logging with Logfire and Loguru integration
-- 🔐 **Secret Management**: Secure token storage via Google Secret Manager
-- 🏗️ **Infrastructure as Code**: Complete Terraform modules for GCP deployment
-- 🐳 **Docker Compose**: Local development with GCP credentials volume mounting
-- 🎯 **Event-Driven Architecture**: Native Cloud Run service integration with Eventarc
-- 🛡️ **Secure Storage**: GCS access with least-privilege IAM policies
+- ✨ **Event-Driven Core**: Real-time **CloudEvent** ingestion via Google Cloud Pub/Sub & Eventarc
+- 🗄️ **ACID Data Lake**: Reliable storage with **Delta Lake** (Merge, Time-travel, Schema Enforcement)
+- ⚡ **Auto-Optimization**: Automatic table compaction and vacuuming for query performance
+- 🚀 **Lightning Fast**: Data manipulation powered by **Polars** (The rust-based pandas alternative)
+- ⏱️ **Durable Execution**: Robust workflow orchestration with **Temporal Cloud**
+- 🔄 **Smart Deduplication**: Content-based hashing ensuring idempotency (Unique CloudEvent IDs)
+- 🏗️ **Cloud Native**: Deployed on **GKE Standard** with best-practices (Workload Identity, VPC-native)
 - ⚡ **Ephemeral Environments**: Automatic per-PR environment creation on Shared Cluster
-- 🧩 **Shared Infrastructure**: Efficient resource usage with consolidated GKE/VPC
-- ⏱️ **Temporal Cloud**: Durable workflow orchestration with ephemeral workers
-- 🔁 **Ephemeral Workers**: Workers start/stop per request for efficient resource usage (see [Adding Workers](https://jojo.github.io/event-driven-gcp/kubernetes/#adding-temporal-workers))
+- 🧩 **Shared Infrastructure**: Efficient resource usage with consolidated GKE/VPC topology
+- 📊 **Next-Gen Observability**: Deep insights with **Logfire** and structured logging
+- 👷 **Persistent Workers**: Scalable Kubernetes Deployments for background processing
+- 🔐 **Zero-Trust Security**: Least-privilege IAM, Secret Manager, and Private GKE Nodes
+- 🐳 **DevEx First**: Local development mirroring production via Docker Compose
 
 ## Architecture
 
@@ -46,7 +45,7 @@ graph TD
         end
 
         subgraph App["Application Layer"]
-            Service["K8s Service (Cloud Run)"]
+            Service["K8s Service"]
             Pods["FastAPI Pods"]
             Delta["Delta Lake (GCS)"]
             Logfire["Logfire Observability"]
@@ -56,9 +55,10 @@ graph TD
     %% Relationships
     PubSub -->|Push| Eventarc
     Eventarc -->|Trigger| Service
-    Service --> Pods
-    Pods -->|Write| Delta
-    Pods -->|Log| Logfire
+    Service -->|Start Workflow| Temporal["Temporal Cloud"]
+    Temporal -->|Execute| Worker["K8s Worker Deployment"]
+    Worker -->|Write| Delta
+    Worker -->|Log| Logfire
 
     %% Styling
     classDef shared fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000;
@@ -67,7 +67,8 @@ graph TD
 
     class VPC,DNS,GKE shared;
     class PubSub,Eventarc event;
-    class Service,Pods,Delta,Logfire app;
+    class Service,Pods,Delta,Logfire,Worker app;
+    class Temporal event;
 ```
 
 The system follows an event-driven pattern where:
@@ -78,7 +79,7 @@ The system follows an event-driven pattern where:
 4. Data is decoded from base64 and parsed as JSON
 5. A unique ID is generated using SHA256 hash of event content
 6. Data is validated with Pydantic models
-7. **Temporal Workflow** is triggered with ephemeral worker
+7. **Temporal Workflow** is triggered (handled by persistent worker)
 8. Events are processed and upserted into Delta Lake tables on GCS
 9. Tables are automatically optimized (compact + vacuum)
 10. Worker shuts down and response is returned
@@ -152,6 +153,7 @@ event-driven-gcp/
 ├── api/                      # FastAPI application
 │   ├── routers/             # API endpoints
 │   ├── models/              # Pydantic models
+│   ├── temporal_workflows/  # Temporal Workflows & Workers
 │   ├── docs/                # OpenAPI documentation
 │   └── utils/               # Configuration and utilities
 ├── infra/                   # Terraform infrastructure
@@ -335,21 +337,21 @@ Each build creates multiple Docker image tags:
 1. **Build & Test**: Run tests and type checking
 2. **Terraform**: Deploy Artifact Registry
 3. **Docker**: Build and push multi-tag image
-4. **Deploy**: Update Cloud Run service
+4. **Deploy**: Update GKE Deployment
 5. **Documentation**: Deploy MkDocs to GitHub Pages
 
 ## IAM & Security
 
 ### Service Accounts
 
-**Cloud Run Runtime** (`cloudrun-runtime-{env}`):
+**Workload Identity** (`cloudrun-runtime-{env}`):
 - `roles/secretmanager.secretAccessor` - Access secrets
 - `roles/storage.objectAdmin` - Read/write GCS objects
 - `roles/bigquery.jobUser` - Run BigQuery jobs
 
 **Eventarc Triggers** (`eventarc-triggers-{env}`):
 - `roles/eventarc.eventReceiver` - Receive events
-- `roles/run.invoker` - Invoke Cloud Run
+- `roles/run.invoker` - Invoke Service (required for Eventarc)
 - `roles/pubsub.subscriber` - Subscribe to topics
 
 ### Secret Management
@@ -367,12 +369,14 @@ gcloud secrets add-iam-policy-binding LOGFIRE_TOKEN_EVENT_DRIVEN_TEMPLATE \
 
 ## Technology Stack
 
-- **API**: [FastAPI](https://fastapi.tiangolo.com/) - Modern async Python web framework
-- **Storage**: [Delta Lake](https://delta.io/) - ACID-compliant data lake
-- **Data Processing**: [Polars](https://pola.rs/) - Lightning-fast DataFrame library
+- **API**: [FastAPI](https://fastapi.tiangolo.com/) - High-performance async framework
+- **Orchestration**: [Temporal](https://temporal.io/) - Durable execution for mission-critical workflows
+- **Storage**: [Delta Lake](https://delta.io/) - Reliable Data Lakes at scale
+- **Processing**: [Polars](https://pola.rs/) - Blazingly fast DataFrames
+- **Infrastructure**: [GKE Standard](https://cloud.google.com/kubernetes-engine) - Production-grade Kubernetes
+- **Observability**: [Logfire](https://logfire.pydantic.dev/) - Modern open-telemetry based monitoring
+- **IaC**: [Terraform](https://www.terraform.io/) - Declarative infrastructure
 - **Cloud**: [Google Cloud Platform](https://cloud.google.com/) - Serverless infrastructure
-- **Observability**: [Logfire](https://logfire.pydantic.dev/) - Real-time monitoring
-- **IaC**: [Terraform](https://www.terraform.io/) - Infrastructure as Code
 - **CI/CD**: [GitHub Actions](https://github.com/features/actions) - Automated deployment
 
 ## Acknowledgments

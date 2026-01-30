@@ -37,7 +37,9 @@ app:
 | **Artifact Repository** | `REPO_ARTIFACTORY: docker-repository` | `artifactory_repository_id = "docker-repository"` | - |
 | **K8s Service Name** | - | `eventarc_service_name = "event-driven-api"` | `fullnameOverride: "event-driven-api"` |
 
-### Temporal Cloud Configuration
+### Temporal Cloud Configuration (Independent)
+
+These values are **not** managed by `config.yaml` or the sync process. They are configured directly in the application or Secret Manager.
 
 | Value | Location | Description |
 |-------|----------|-------------|
