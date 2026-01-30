@@ -114,7 +114,7 @@ graph LR
 ### 6. Temporal Cloud (External Service)
 
 - **Durable Workflows**: Orchestrates long-running business processes with automatic retries.
-- **Ephemeral Workers**: Workers are created per-request and destroyed after execution for efficient resource usage.
+- **Ephemeral Workers**: Workers are created per-request and destroyed after execution for efficient resource usage. (See [Adding Workers](kubernetes.md#adding-temporal-workers))
 - **Configuration**:
   - `TEMPORAL_ADDRESS`: Temporal Cloud endpoint (e.g., `europe-west3.gcp.api.temporal.io:7233`)
   - `TEMPORAL_NAMESPACE`: Your Temporal namespace

@@ -205,11 +205,10 @@ jobs:
       # Wait for K8s service to be ready
       - name: Wait for service readiness
         run: |
-          kubectl wait --for=condition=available deployment/event-driven-api-client \
-          --namespace=${{ steps.ns.outputs.namespace }} --timeout=300s \
-          && \
-          kubectl wait --for=condition=available deployment/event-driven-api-worker \
-          --namespace=${{ steps.ns.outputs.namespace }} --timeout=300s
+          kubectl wait --for=condition=available deployment \
+          -l app.kubernetes.io/instance=event-driven-api \
+          --namespace=${{ steps.ns.outputs.namespace }} \
+          --timeout=300s
 
       # Import Legacy/Existing Eventarc Triggers
       - name: Import Existing Eventarc Triggers

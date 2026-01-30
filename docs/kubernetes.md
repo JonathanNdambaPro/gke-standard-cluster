@@ -126,3 +126,54 @@ If the pod cannot access GCS or Secret Manager:
 ### ⚠️ Certificate Provisioning Fails
 *   **Check DNS**: The domain **must** point to the Ingress static IP. Google won't provision the cert if DNS validation fails.
 *   **Check Quota**: Ensure you haven't exceeded SSL cert quotas.
+
+## Adding Temporal Workers 👷
+
+To add a new Temporal Worker (e.g., for a new domain), you need to create a dedicated Deployment.
+
+### 1. Create a new Deployment Manifest
+
+Reference `infra/helm/templates/DeploymentWorker.yaml` (e.g., enable a copy like `DeploymentEmailWorker.yaml`) and update:
+
+1.  **Name**: Change `-worker` suffix (e.g., `-worker-email`).
+2.  **Command**: Point to your new worker script.
+3.  **Liveness Probe**: Update `pgrep` to match your script.
+
+```yaml
+# infra/helm/templates/DeploymentEmailWorker.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm.fullname" . }}-worker-email
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker-email
+spec:
+  # ... (replica configuration)
+  template:
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-worker-email
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          # IMPORTANT: Use module syntax (-m) for imports to work
+          command: ["uv", "run", "python", "-m", "api.temporal_workflows.email.worker"]
+          livenessProbe:
+            exec:
+              command: ["pgrep", "-f", "api.temporal_workflows.email.worker"]
+```
+
+### 2. Update `values.yaml` (Optional)
+
+If you need specific resources for this worker, add a section in `values.yaml`. 
+**Note**: `replicaCount` is strictly handled by HPA if autoscaling is enabled.
+
+```yaml
+workerEmail:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+```
+
+And update your deployment template to use these values:
+`resources: {{ toYaml .Values.workerEmail.resources | nindent 12 }}`.

@@ -27,7 +27,7 @@ An event-driven architecture implementation on Google Cloud Platform that ingest
 - ⚡ **Ephemeral Environments**: Automatic per-PR environment creation on Shared Cluster
 - 🧩 **Shared Infrastructure**: Efficient resource usage with consolidated GKE/VPC
 - ⏱️ **Temporal Cloud**: Durable workflow orchestration with ephemeral workers
-- 🔁 **Ephemeral Workers**: Workers start/stop per request for efficient resource usage
+- 🔁 **Ephemeral Workers**: Workers start/stop per request for efficient resource usage (see [Adding Workers](https://jojo.github.io/event-driven-gcp/kubernetes/#adding-temporal-workers))
 
 ## Architecture
 
