@@ -527,6 +527,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#adding-temporal-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Temporal Workers 👷
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Temporal Workers 👷">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-create-a-new-deployment-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Create a new Deployment Manifest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-update-valuesyaml-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Update values.yaml (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -738,6 +777,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#adding-temporal-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Temporal Workers 👷
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Temporal Workers 👷">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-create-a-new-deployment-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Create a new Deployment Manifest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-update-valuesyaml-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Update values.yaml (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -902,6 +980,47 @@
 <li><strong>Check DNS</strong>: The domain <strong>must</strong> point to the Ingress static IP. Google won't provision the cert if DNS validation fails.</li>
 <li><strong>Check Quota</strong>: Ensure you haven't exceeded SSL cert quotas.</li>
 </ul>
+<h2 id="adding-temporal-workers">Adding Temporal Workers 👷<a class="headerlink" href="#adding-temporal-workers" title="Permanent link">&para;</a></h2>
+<p>To add a new Temporal Worker (e.g., for a new domain), you need to create a dedicated Deployment.</p>
+<h3 id="1-create-a-new-deployment-manifest">1. Create a new Deployment Manifest<a class="headerlink" href="#1-create-a-new-deployment-manifest" title="Permanent link">&para;</a></h3>
+<p>Reference <code>infra/helm/templates/DeploymentWorker.yaml</code> (e.g., enable a copy like <code>DeploymentEmailWorker.yaml</code>) and update:</p>
+<ol>
+<li><strong>Name</strong>: Change <code>-worker</code> suffix (e.g., <code>-worker-email</code>).</li>
+<li><strong>Command</strong>: Point to your new worker script.</li>
+<li><strong>Liveness Probe</strong>: Update <code>pgrep</code> to match your script.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># infra/helm/templates/DeploymentEmailWorker.yaml</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">include &quot;helm.fullname&quot; .</span><span class="w"> </span><span class="p p-Indicator">}}</span><span class="l l-Scalar l-Scalar-Plain">-worker-email</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">{{</span><span class="nv">- include &quot;helm.labels&quot; . | nindent 4</span><span class="w"> </span><span class="p p-Indicator">}}</span>
+<span class="w">    </span><span class="nt">app.kubernetes.io/component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">worker-email</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># ... (replica configuration)</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{{</span><span class="w"> </span><span class="nv">.Chart.Name</span><span class="w"> </span><span class="p p-Indicator">}}</span><span class="l l-Scalar l-Scalar-Plain">-worker-email</span>
+<span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">.Values.image.repository</span><span class="nv"> </span><span class="s">}}:{{</span><span class="nv"> </span><span class="s">.Values.image.tag</span><span class="nv"> </span><span class="s">}}&quot;</span>
+<span class="w">          </span><span class="c1"># IMPORTANT: Use module syntax (-m) for imports to work</span>
+<span class="w">          </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;uv&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;run&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;python&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-m&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;api.temporal_workflows.email.worker&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">          </span><span class="nt">livenessProbe</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">exec</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pgrep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;api.temporal_workflows.email.worker&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h3 id="2-update-valuesyaml-optional">2. Update <code>values.yaml</code> (Optional)<a class="headerlink" href="#2-update-valuesyaml-optional" title="Permanent link">&para;</a></h3>
+<p>If you need specific resources for this worker, add a section in <code>values.yaml</code>.
+<strong>Note</strong>: <code>replicaCount</code> is strictly handled by HPA if autoscaling is enabled.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">workerEmail</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100m</span>
+<span class="w">      </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128Mi</span>
+</code></pre></div>
+<p>And update your deployment template to use these values:
+<code>resources: {{ toYaml .Values.workerEmail.resources | nindent 12 }}</code>.</p>
 
 
 
