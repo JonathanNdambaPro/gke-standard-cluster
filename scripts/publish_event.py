@@ -14,6 +14,11 @@ from google.api_core.exceptions import GoogleAPICallError
 from google.cloud import pubsub_v1
 from loguru import logger
 from pydantic import BaseModel, Field
+from enum import StrEnum
+
+class Topic(StrEnum):
+    TOPIC_ID_INGEST = "event-ingestion"
+    TOPIC_ID_TEMPORAL = "temporal-workflow"
 
 # Configuration - matches config.yaml
 PROJECT_ID = "dataascode"
@@ -103,4 +108,4 @@ def send_to_dlq(topic_id: str, message_data: dict, error: str) -> None:
 
 if __name__ == "__main__":
     logger.info("🕐 Publishing to Temporal workflow topic...")
-    publish_with_retry(TOPIC_ID_TEMPORAL, MESSAGE)
+    publish_with_retry(Topic.TOPIC_ID_TEMPORAL, MESSAGE)
