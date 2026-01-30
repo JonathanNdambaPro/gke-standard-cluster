@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#event-driven-gcp" class="md-skip">
+        <a href="#cutting-edge-event-driven-gcp-platform" class="md-skip">
           Skip to content
         </a>
       
@@ -1222,34 +1222,33 @@
   
 
 
-<h1 id="event-driven-gcp">Event-Driven GCP 🚀<a class="headerlink" href="#event-driven-gcp" title="Permanent link">&para;</a></h1>
+<h1 id="cutting-edge-event-driven-gcp-platform">Cutting Edge Event-Driven GCP Platform 🚀<a class="headerlink" href="#cutting-edge-event-driven-gcp-platform" title="Permanent link">&para;</a></h1>
 <p><a href="https://img.shields.io/github/v/release/jojo/event-driven-gcp"><img alt="Release" src="https://img.shields.io/github/v/release/jojo/event-driven-gcp" /></a>
 <a href="https://github.com/jojo/event-driven-gcp/actions/workflows/main.yml?query=branch%3Amain"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/jojo/event-driven-gcp/main.yml?branch=main" /></a>
 <a href="https://codecov.io/gh/jojo/event-driven-gcp"><img alt="codecov" src="https://codecov.io/gh/jojo/event-driven-gcp/branch/main/graph/badge.svg" /></a>
 <a href="https://img.shields.io/github/commit-activity/m/jojo/event-driven-gcp"><img alt="Commit activity" src="https://img.shields.io/github/commit-activity/m/jojo/event-driven-gcp" /></a>
 <a href="https://img.shields.io/github/license/jojo/event-driven-gcp"><img alt="License" src="https://img.shields.io/github/license/jojo/event-driven-gcp" /></a></p>
-<p>An event-driven architecture implementation on Google Cloud Platform that ingests CloudEvents from Pub/Sub and stores them in Delta Lake format on GCS.</p>
+<p>A state-of-the-art <strong>Modern Data Platform</strong> on Google Cloud Platform.
+It leverages the power of <strong>Temporal</strong>, <strong>Delta Lake</strong>, and <strong>Polars</strong> on <strong>GKE Standard</strong> to provide a robust, scalable, and ultra-fast event ingestion pipeline.</p>
 <ul>
 <li><strong>Github repository</strong>: <a href="https://github.com/jojo/event-driven-gcp/">https://github.com/jojo/event-driven-gcp/</a></li>
 <li><strong>Documentation</strong>: <a href="https://jojo.github.io/event-driven-gcp/">https://jojo.github.io/event-driven-gcp/</a></li>
 </ul>
 <h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
 <ul>
-<li>✨ <strong>CloudEvent Ingestion</strong>: Receive and process CloudEvents via Google Cloud Pub/Sub</li>
-<li>🗄️ <strong>Delta Lake Storage</strong>: ACID-compliant storage with merge and time-travel capabilities</li>
-<li>🔄 <strong>Content-Based Deduplication</strong>: Hash-based unique ID generation to prevent duplicate events</li>
-<li>⚡ <strong>Auto-Optimization</strong>: Automatic table compaction and vacuum after ingestion</li>
-<li>🐻‍❄️ <strong>Polars Integration</strong>: High-performance DataFrame operations for data processing</li>
-<li>📊 <strong>Observability</strong>: Structured logging with Logfire and Loguru integration</li>
-<li>🔐 <strong>Secret Management</strong>: Secure token storage via Google Secret Manager</li>
-<li>🏗️ <strong>Infrastructure as Code</strong>: Complete Terraform modules for GCP deployment</li>
-<li>🐳 <strong>Docker Compose</strong>: Local development with GCP credentials volume mounting</li>
-<li>🎯 <strong>Event-Driven Architecture</strong>: Native Cloud Run service integration with Eventarc</li>
-<li>🛡️ <strong>Secure Storage</strong>: GCS access with least-privilege IAM policies</li>
+<li>✨ <strong>Event-Driven Core</strong>: Real-time <strong>CloudEvent</strong> ingestion via Google Cloud Pub/Sub &amp; Eventarc</li>
+<li>🗄️ <strong>ACID Data Lake</strong>: Reliable storage with <strong>Delta Lake</strong> (Merge, Time-travel, Schema Enforcement)</li>
+<li>⚡ <strong>Auto-Optimization</strong>: Automatic table compaction and vacuuming for query performance</li>
+<li>🚀 <strong>Lightning Fast</strong>: Data manipulation powered by <strong>Polars</strong> (The rust-based pandas alternative)</li>
+<li>⏱️ <strong>Durable Execution</strong>: Robust workflow orchestration with <strong>Temporal Cloud</strong></li>
+<li>🔄 <strong>Smart Deduplication</strong>: Content-based hashing ensuring idempotency (Unique CloudEvent IDs)</li>
+<li>🏗️ <strong>Cloud Native</strong>: Deployed on <strong>GKE Standard</strong> with best-practices (Workload Identity, VPC-native)</li>
 <li>⚡ <strong>Ephemeral Environments</strong>: Automatic per-PR environment creation on Shared Cluster</li>
-<li>🧩 <strong>Shared Infrastructure</strong>: Efficient resource usage with consolidated GKE/VPC</li>
-<li>⏱️ <strong>Temporal Cloud</strong>: Durable workflow orchestration with ephemeral workers</li>
-<li>🔁 <strong>Ephemeral Workers</strong>: Workers start/stop per request for efficient resource usage (see <a href="https://jojo.github.io/event-driven-gcp/kubernetes/#adding-temporal-workers">Adding Workers</a>)</li>
+<li>🧩 <strong>Shared Infrastructure</strong>: Efficient resource usage with consolidated GKE/VPC topology</li>
+<li>📊 <strong>Next-Gen Observability</strong>: Deep insights with <strong>Logfire</strong> and structured logging</li>
+<li>👷 <strong>Persistent Workers</strong>: Scalable Kubernetes Deployments for background processing</li>
+<li>🔐 <strong>Zero-Trust Security</strong>: Least-privilege IAM, Secret Manager, and Private GKE Nodes</li>
+<li>🐳 <strong>DevEx First</strong>: Local development mirroring production via Docker Compose</li>
 </ul>
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>graph TD
@@ -1266,7 +1265,7 @@
         end
 
         subgraph App["Application Layer"]
-            Service["K8s Service (Cloud Run)"]
+            Service["K8s Service"]
             Pods["FastAPI Pods"]
             Delta["Delta Lake (GCS)"]
             Logfire["Logfire Observability"]
@@ -1276,9 +1275,10 @@
     %% Relationships
     PubSub --&gt;|Push| Eventarc
     Eventarc --&gt;|Trigger| Service
-    Service --&gt; Pods
-    Pods --&gt;|Write| Delta
-    Pods --&gt;|Log| Logfire
+    Service --&gt;|Start Workflow| Temporal["Temporal Cloud"]
+    Temporal --&gt;|Execute| Worker["K8s Worker Deployment"]
+    Worker --&gt;|Write| Delta
+    Worker --&gt;|Log| Logfire
 
     %% Styling
     classDef shared fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000;
@@ -1287,7 +1287,8 @@
 
     class VPC,DNS,GKE shared;
     class PubSub,Eventarc event;
-    class Service,Pods,Delta,Logfire app;</code></pre>
+    class Service,Pods,Delta,Logfire,Worker app;
+    class Temporal event;</code></pre>
 <p>The system follows an event-driven pattern where:</p>
 <ol>
 <li>Events are published to a Pub/Sub topic</li>
@@ -1296,7 +1297,7 @@
 <li>Data is decoded from base64 and parsed as JSON</li>
 <li>A unique ID is generated using SHA256 hash of event content</li>
 <li>Data is validated with Pydantic models</li>
-<li><strong>Temporal Workflow</strong> is triggered with ephemeral worker</li>
+<li><strong>Temporal Workflow</strong> is triggered (handled by persistent worker)</li>
 <li>Events are processed and upserted into Delta Lake tables on GCS</li>
 <li>Tables are automatically optimized (compact + vacuum)</li>
 <li>Worker shuts down and response is returned</li>
@@ -1365,6 +1366,7 @@ terraform<span class="w"> </span>apply
 ├── api/                      # FastAPI application
 │   ├── routers/             # API endpoints
 │   ├── models/              # Pydantic models
+│   ├── temporal_workflows/  # Temporal Workflows &amp; Workers
 │   ├── docs/                # OpenAPI documentation
 │   └── utils/               # Configuration and utilities
 ├── infra/                   # Terraform infrastructure
@@ -1510,18 +1512,18 @@ make<span class="w"> </span>test-cov
 <li><strong>Build &amp; Test</strong>: Run tests and type checking</li>
 <li><strong>Terraform</strong>: Deploy Artifact Registry</li>
 <li><strong>Docker</strong>: Build and push multi-tag image</li>
-<li><strong>Deploy</strong>: Update Cloud Run service</li>
+<li><strong>Deploy</strong>: Update GKE Deployment</li>
 <li><strong>Documentation</strong>: Deploy MkDocs to GitHub Pages</li>
 </ol>
 <h2 id="iam-security">IAM &amp; Security<a class="headerlink" href="#iam-security" title="Permanent link">&para;</a></h2>
 <h3 id="service-accounts">Service Accounts<a class="headerlink" href="#service-accounts" title="Permanent link">&para;</a></h3>
-<p><strong>Cloud Run Runtime</strong> (<code>cloudrun-runtime-{env}</code>):
+<p><strong>Workload Identity</strong> (<code>cloudrun-runtime-{env}</code>):
 - <code>roles/secretmanager.secretAccessor</code> - Access secrets
 - <code>roles/storage.objectAdmin</code> - Read/write GCS objects
 - <code>roles/bigquery.jobUser</code> - Run BigQuery jobs</p>
 <p><strong>Eventarc Triggers</strong> (<code>eventarc-triggers-{env}</code>):
 - <code>roles/eventarc.eventReceiver</code> - Receive events
-- <code>roles/run.invoker</code> - Invoke Cloud Run
+- <code>roles/run.invoker</code> - Invoke Service (required for Eventarc)
 - <code>roles/pubsub.subscriber</code> - Subscribe to topics</p>
 <h3 id="secret-management">Secret Management<a class="headerlink" href="#secret-management" title="Permanent link">&para;</a></h3>
 <p>Sensitive credentials are stored in Google Secret Manager:
@@ -1535,12 +1537,14 @@ gcloud<span class="w"> </span>secrets<span class="w"> </span>add-iam-policy-bind
 </code></pre></div></p>
 <h2 id="technology-stack">Technology Stack<a class="headerlink" href="#technology-stack" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>API</strong>: <a href="https://fastapi.tiangolo.com/">FastAPI</a> - Modern async Python web framework</li>
-<li><strong>Storage</strong>: <a href="https://delta.io/">Delta Lake</a> - ACID-compliant data lake</li>
-<li><strong>Data Processing</strong>: <a href="https://pola.rs/">Polars</a> - Lightning-fast DataFrame library</li>
+<li><strong>API</strong>: <a href="https://fastapi.tiangolo.com/">FastAPI</a> - High-performance async framework</li>
+<li><strong>Orchestration</strong>: <a href="https://temporal.io/">Temporal</a> - Durable execution for mission-critical workflows</li>
+<li><strong>Storage</strong>: <a href="https://delta.io/">Delta Lake</a> - Reliable Data Lakes at scale</li>
+<li><strong>Processing</strong>: <a href="https://pola.rs/">Polars</a> - Blazingly fast DataFrames</li>
+<li><strong>Infrastructure</strong>: <a href="https://cloud.google.com/kubernetes-engine">GKE Standard</a> - Production-grade Kubernetes</li>
+<li><strong>Observability</strong>: <a href="https://logfire.pydantic.dev/">Logfire</a> - Modern open-telemetry based monitoring</li>
+<li><strong>IaC</strong>: <a href="https://www.terraform.io/">Terraform</a> - Declarative infrastructure</li>
 <li><strong>Cloud</strong>: <a href="https://cloud.google.com/">Google Cloud Platform</a> - Serverless infrastructure</li>
-<li><strong>Observability</strong>: <a href="https://logfire.pydantic.dev/">Logfire</a> - Real-time monitoring</li>
-<li><strong>IaC</strong>: <a href="https://www.terraform.io/">Terraform</a> - Infrastructure as Code</li>
 <li><strong>CI/CD</strong>: <a href="https://github.com/features/actions">GitHub Actions</a> - Automated deployment</li>
 </ul>
 <h2 id="acknowledgments">Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permanent link">&para;</a></h2>
