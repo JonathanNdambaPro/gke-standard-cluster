@@ -83,8 +83,8 @@ helm_manifest:
 	helm get manifest event-driven-api > trash.log
 
 
-.PHONY: helm_update
-helm_update:
+.PHONY: helm_update_prod
+helm_update_prod:
 	helm upgrade --install event-driven-api infra/helm \
 	--namespace default \
 	--create-namespace \

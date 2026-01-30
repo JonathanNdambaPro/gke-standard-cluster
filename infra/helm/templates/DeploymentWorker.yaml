@@ -20,6 +20,7 @@ spec:
         {{- include "helm.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: worker
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name | default (include "helm.fullname" .) }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

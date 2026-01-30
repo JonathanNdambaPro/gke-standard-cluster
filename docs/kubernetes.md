@@ -164,7 +164,7 @@ spec:
 
 ### 2. Update `values.yaml` (Optional)
 
-If you need specific resources for this worker, add a section in `values.yaml`. 
+If you need specific resources for this worker, add a section in `values.yaml`.
 **Note**: `replicaCount` is strictly handled by HPA if autoscaling is enabled.
 
 ```yaml
