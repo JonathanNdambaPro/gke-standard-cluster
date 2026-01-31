@@ -14,6 +14,7 @@ from temporalio.client import Client
 from api.docs.ingest_delta import docs_ingest_event
 from api.models.events import EventInputModel, EventModelV1
 from api.temporal_workflows.client import get_temporal_client
+from api.temporal_workflows.hello.config_excution_temporal import config_temporal_hello, config_temporal_hello_eventarc
 from api.temporal_workflows.hello.workflow import YourWorkflow
 from api.utils.config import settings
 
@@ -93,7 +94,7 @@ async def temporal_hello(
         YourWorkflow.run,
         EventModelV1(id=unique_id, **body),
         id=f"wf-{unique_id}",
-        task_queue="hello-task-queue",
+        task_queue=config_temporal_hello.task_queue,
     )
 
     return {"status": "workflow_started", "id": handle.id}
@@ -119,7 +120,7 @@ async def temporal_hello_eventarc(request: Request, client_temporal: Client = De
         YourWorkflow.run,
         data_to_ingest,
         id=f"your-workflow-id-{uuid.uuid4()}",
-        task_queue="hello-task-queue-eventarc",
+        task_queue=config_temporal_hello_eventarc.task_queue,
     )
 
     logger.info(f"Workflow result: {result}")

@@ -22,6 +22,7 @@ from loguru import logger
 from temporalio.worker import Worker
 
 from api.temporal_workflows.client import get_temporal_client
+from api.temporal_workflows.hello.config_excution_temporal import config_temporal_hello, config_temporal_hello_eventarc
 from api.temporal_workflows.hello.workflow import YourWorkflow
 from api.temporal_workflows.hello.your_activities_dacx import your_activity
 
@@ -31,7 +32,7 @@ async def main():
 
     worker = Worker(
         client,
-        task_queue="hello-task-queue",
+        task_queue=config_temporal_hello.task_queue,
         workflows=[YourWorkflow],
         activities=[your_activity],
     )
@@ -45,14 +46,14 @@ async def mutiple_main():
 
     worker = Worker(
         client,
-        task_queue="hello-task-queue",
+        task_queue=config_temporal_hello.task_queue,
         workflows=[YourWorkflow],
         activities=[your_activity],
     )
 
     worker_eventrarc = Worker(
         client,
-        task_queue="hello-task-queue-eventarc",
+        task_queue=config_temporal_hello_eventarc.task_queue,
         workflows=[YourWorkflow],
         activities=[your_activity],
     )
