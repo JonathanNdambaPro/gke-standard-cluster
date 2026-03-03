@@ -23,18 +23,19 @@ from temporalio.worker import Worker
 
 from api.temporal_workflows.client import get_temporal_client
 from api.temporal_workflows.hello.config_excution_temporal import config_temporal_hello, config_temporal_hello_eventarc
-from api.temporal_workflows.hello.workflow import YourWorkflow
-from api.temporal_workflows.hello.your_activities_dacx import your_activity
+from api.temporal_workflows.hello.workflow import YourWorkflow, YourWorkflowMultiStep
+from api.temporal_workflows.hello.your_activities_dacx import HelloActivities, HelloActivitiesMultiStep
 
 
 async def main():
     client = await get_temporal_client()
+    instance_hello_worker = HelloActivities()
 
     worker = Worker(
         client,
         task_queue=config_temporal_hello.task_queue,
         workflows=[YourWorkflow],
-        activities=[your_activity],
+        activities=[instance_hello_worker.your_activity],
     )
 
     logger.info("Worker started...")
@@ -43,24 +44,36 @@ async def main():
 
 async def mutiple_main():
     client = await get_temporal_client()
+    instance_hello_worker = HelloActivities()
+    instance_hello_worker_multi_step = HelloActivitiesMultiStep()
 
     worker = Worker(
         client,
         task_queue=config_temporal_hello.task_queue,
         workflows=[YourWorkflow],
-        activities=[your_activity],
+        activities=[instance_hello_worker.your_activity],
+    )
+
+    worker_multi_step = Worker(
+        client,
+        task_queue=config_temporal_hello.task_queue,
+        workflows=[YourWorkflowMultiStep],
+        activities=[
+            instance_hello_worker_multi_step.your_activity_name,
+            instance_hello_worker_multi_step.your_activity_lastname,
+        ],
     )
 
     worker_eventrarc = Worker(
         client,
         task_queue=config_temporal_hello_eventarc.task_queue,
         workflows=[YourWorkflow],
-        activities=[your_activity],
+        activities=[instance_hello_worker.your_activity],
     )
 
     logger.info("Worker started...")
 
-    await asyncio.gather(worker.run(), worker_eventrarc.run())
+    await asyncio.gather(worker.run(), worker_eventrarc.run(), worker_multi_step.run())
 
 
 if __name__ == "__main__":

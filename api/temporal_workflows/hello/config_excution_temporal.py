@@ -8,14 +8,10 @@ class ConfigTemporalWorflowyActivity(BaseModel):
 
 
 config_temporal_hello = ConfigTemporalWorflowyActivity(
-    activity_name="your_activity",
-    workflow_name="YourWorkflow",
-    task_queue="hello-task-queue"
+    activity_name="your_activity", workflow_name="YourWorkflow", task_queue="hello-task-queue"
 )
 
 
 config_temporal_hello_eventarc = ConfigTemporalWorflowyActivity(
-    activity_name="your_activity",
-    workflow_name="YourWorkflow",
-    task_queue="hello-task-queue-eventarc"
+    activity_name="your_activity", workflow_name="YourWorkflowEventArc", task_queue="hello-task-queue-eventarc"
 )

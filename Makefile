@@ -62,6 +62,11 @@ apply_terraform_local:
 destroy_terraform_local:
 	@terraform -chdir=infra/terraform destroy -var-file="tfvars/local.tfvars" --auto-approve
 
+.PHONY:	destroy_terraform_main
+destroy_terraform_main:
+	@helm uninstall event-driven-api --namespace default
+	@terraform -chdir=infra/terraform destroy -var-file="tfvars/main.tfvars" --auto-approve
+
 .PHONY: generate_key_iam
 generate_key_iam:
 	@bash deploy_service_account_CICD.sh
