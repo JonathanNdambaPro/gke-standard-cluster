@@ -25,6 +25,12 @@ class Settings(BaseSettings):
             secret_name="TEMPORAL_API_KEY",  # noqa: S106  # nosec B106
         )
     )
+    FERNET_ENCRYPTION_KEY: str = Field(
+        default_factory=lambda: get_secret_from_gcp(
+            project_id="dataascode",
+            secret_name="FERNET_ENCRYPTION_KEY",  # noqa: S106  # nosec B106
+        )
+    )
 
 
 settings = Settings()

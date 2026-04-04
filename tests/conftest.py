@@ -14,7 +14,6 @@ def mock_event_model_v1() -> EventModelV1:
 # def mock_hello_activities(mocker):
 
 
-
 @pytest.fixture
 def mock_hello_your_activy():
     @activity.defn(name=config_temporal_hello.activity_name)
