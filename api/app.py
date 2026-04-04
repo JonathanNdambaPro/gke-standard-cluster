@@ -47,7 +47,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.TEMPORAL_ADDRESS], # En prod, mets l'URL exacte de ton interface Temporal Cloud/Web
+    allow_origins=[settings.TEMPORAL_ADDRESS],  # En prod, mets l'URL exacte de ton interface Temporal Cloud/Web
     allow_credentials=True,
     # Temporal n'a besoin que du POST (et OPTIONS pour la vérification du navigateur)
     allow_methods=["POST", "OPTIONS"],
@@ -56,6 +56,7 @@ app.add_middleware(
 )
 
 codec = EncryptionCodec(secret_key=settings.FERNET_ENCRYPTION_KEY)
+
 
 @app.post("/decode")
 async def decode_payloads(request: Request):
@@ -70,10 +71,8 @@ async def decode_payloads(request: Request):
 
     # 3. Renvoyer les données en clair au navigateur
     result = Payloads(payloads=decoded_payloads)
-    return Response(
-        content=json_format.MessageToJson(result),
-        media_type="application/json"
-    )
+    return Response(content=json_format.MessageToJson(result), media_type="application/json")
+
 
 @app.get("/")
 async def health_check():

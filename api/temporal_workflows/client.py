@@ -16,13 +16,10 @@ async def get_temporal_client() -> Client:
         tls=True,
         interceptors=[TracingInterceptor()],
         data_converter=dataclasses.replace(
-                temporalio.converter.default(),
-
-                # 1. On active notre Codec (ex: ton CompressionCodex)
-                # payload_codec=CompressionCodex()
-
-                # 1. On active notre Codec (ex: ton CompressionCodex)
-                payload_codec=EncryptionCodec(secret_key=settings.FERNET_ENCRYPTION_KEY)
+            temporalio.converter.default(),
+            # 1. On active notre Codec (ex: ton CompressionCodex)
+            # 1. On active notre Codec (ex: ton CompressionCodex)
+            payload_codec=EncryptionCodec(secret_key=settings.FERNET_ENCRYPTION_KEY),
         ),
         # 2. LA LIGNE MAGIQUE : On force les erreurs
         # à passer par ce même Codec !

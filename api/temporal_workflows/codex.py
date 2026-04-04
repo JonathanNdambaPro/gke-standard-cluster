@@ -18,19 +18,14 @@ class CompressionCodex(PayloadCodec):
             for p in payloads
         ]
 
-
     async def decode(self, payloads: Iterable[Payload]) -> list[Payload]:
-            ret: list[Payload] = []
-            for p in payloads:
-                    if p.metadata.get("encoding", b"").decode() != "binary/snappy":
-                            ret.append(p)
-                            continue
-                    ret.append(Payload.FromString(bytes(cramjam.snappy.decompress(p.data))))
-            return ret
-
-
-
-
+        ret: list[Payload] = []
+        for p in payloads:
+            if p.metadata.get("encoding", b"").decode() != "binary/snappy":
+                ret.append(p)
+                continue
+            ret.append(Payload.FromString(bytes(cramjam.snappy.decompress(p.data))))
+        return ret
 
 
 class EncryptionCodec(PayloadCodec):
