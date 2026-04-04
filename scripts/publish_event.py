@@ -84,7 +84,7 @@ def publish_with_retry(
 
     except GoogleAPICallError as e:
         logger.error(f"❌ All retries failed: {e}")
-        send_to_dlq(topic_id, message_data, str(e))
+        send_to_dlq(topic_id, message_data.model_dump(), str(e))
 
 
 def send_to_dlq(topic_id: str, message_data: dict, error: str) -> None:
@@ -109,5 +109,11 @@ def send_to_dlq(topic_id: str, message_data: dict, error: str) -> None:
 
 
 if __name__ == "__main__":
-    logger.info("🕐 Publishing to Temporal workflow topic...")
-    publish_with_retry(Topic.TOPIC_ID_TEMPORAL, MESSAGE)
+    pre_env = "feat-ephemeralenv"  # None
+    environment = pre_env if pre_env else "production"
+    suffix = f"-{environment}" if environment != "production" else None  # None
+
+    topic_id = f"{Topic.TOPIC_ID_TEMPORAL.value}{suffix}"
+
+    logger.info(f"🕐 Publishing to {topic_id} for environment {environment}...")
+    publish_with_retry(topic_id=topic_id, message_data=MESSAGE, config=PublishConfig(environment=environment))

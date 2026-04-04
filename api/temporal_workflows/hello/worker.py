@@ -50,15 +50,9 @@ async def mutiple_main():
     worker = Worker(
         client,
         task_queue=config_temporal_hello.task_queue,
-        workflows=[YourWorkflow],
-        activities=[instance_hello_worker.your_activity],
-    )
-
-    worker_multi_step = Worker(
-        client,
-        task_queue=config_temporal_hello.task_queue,
-        workflows=[YourWorkflowMultiStep],
+        workflows=[YourWorkflow, YourWorkflowMultiStep],
         activities=[
+            instance_hello_worker.your_activity,
             instance_hello_worker_multi_step.your_activity_name,
             instance_hello_worker_multi_step.your_activity_lastname,
         ],
@@ -73,7 +67,7 @@ async def mutiple_main():
 
     logger.info("Worker started...")
 
-    await asyncio.gather(worker.run(), worker_eventrarc.run(), worker_multi_step.run())
+    await asyncio.gather(worker.run(), worker_eventrarc.run())
 
 
 if __name__ == "__main__":

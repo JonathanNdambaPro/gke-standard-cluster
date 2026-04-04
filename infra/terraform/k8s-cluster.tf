@@ -72,7 +72,7 @@ data "google_service_account" "gke_sa" {
   project    = var.project
 }
 
-# Workload Identity binding for Ephemeral Environments
+# Eventarc Trigger Service Account data for Ephemeral Environments
 data "google_service_account" "eventarc_triggers" {
   count      = local.is_prod ? 0 : 1
   account_id = "eventarc-triggers-gke"
@@ -80,10 +80,10 @@ data "google_service_account" "eventarc_triggers" {
 }
 
 # Workload Identity binding for Ephemeral Environments
-# Connects the K8s SA to the Eventarc Trigger SA (not the GKE Node SA)
+# Connects the K8s SA to the GKE SA to allow Secret Manager access
 resource "google_service_account_iam_member" "workload_identity_binding_ephemeral" {
   count              = local.is_prod ? 0 : 1
-  service_account_id = data.google_service_account.eventarc_triggers[0].name
+  service_account_id = data.google_service_account.gke_sa[0].name
   role               = "roles/iam.workloadIdentityUser"
   member             = "serviceAccount:${var.project}.svc.id.goog[${var.eventarc_trigger_namespace}/event-driven-api-sa]"
 }
